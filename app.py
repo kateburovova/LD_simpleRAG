@@ -1,7 +1,6 @@
 import os
 import streamlit as st
 
-from dotenv import load_dotenv
 from langchain import hub
 from langchain import hub
 from elasticsearch import Elasticsearch
