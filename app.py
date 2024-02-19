@@ -77,7 +77,7 @@ if input_question:
                 st.write(f'Running search for question: {input_question}')
                 # es = Elasticsearch(f'https://{elastic_host}:{elastic_port}', api_key=api_key)
                 try:
-                    es = Elasticsearch(f'https://{elastic_host}:{elastic_port}', api_key=api_key)
+                    es = Elasticsearch(f'https://{elastic_host}:{elastic_port}', api_key=api_key, timeout=30)
                 except Exception as e:
                     st.error(f'Failed to connect to Elasticsearch: {str(e)}')
 
