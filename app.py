@@ -35,8 +35,17 @@ input_question = None
 input_question = st.text_input("Ask your question")
 
 if input_question:
-    angle = AnglE.from_pretrained('WhereIsAI/UAE-Large-V1', pooling_strategy='cls').cuda()
-    angle.set_prompt(prompt=Prompts.C)
+    @st.cache(allow_output_mutation=True,
+              hash_funcs={"_thread.RLock": lambda _: None, "builtins.weakref": lambda _: None})
+    def load_model():
+        angle_model = AnglE.from_pretrained('WhereIsAI/UAE-Large-V1',
+                                            pooling_strategy='cls')  # Removed .cuda() for compatibility
+        angle_model.set_prompt(Prompts.C)
+        return angle_model
+
+    angle = load_model()
+    # angle = AnglE.from_pretrained('WhereIsAI/UAE-Large-V1', pooling_strategy='cls').cuda()
+    # angle.set_prompt(prompt=Prompts.C)
     vec = angle.encode({'text': input_question}, to_numpy=True)
     question_vector = vec.tolist()[0]
 
@@ -73,13 +82,13 @@ if input_question:
                 except Exception as e:
                     st.error(f'Failed to connect to Elasticsearch: {str(e)}')
 
-            #     response = es.search(index=selected_index,
-            #                          knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
-            #                               "query_vector":  question_vector,
-            #                               "k": 5,
-            #                               "num_candidates": 1000,
-            #                               "filter": {"range": {"date": {"gte": formatted_start_date,  "lte": formatted_end_date}}}})
-            #
+                response = es.search(index=selected_index,
+                                     knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
+                                          "query_vector":  question_vector,
+                                          "k": 5,
+                                          "num_candidates": 1000,
+                                          "filter": {"range": {"date": {"gte": formatted_start_date,  "lte": formatted_end_date}}}})
+                st.write('search successfull')
             #     for doc in response['hits']['hits']:
             #         texts_list.append(doc['_source']['translated_text'])
             #
