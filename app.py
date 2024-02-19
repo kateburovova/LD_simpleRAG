@@ -19,8 +19,6 @@ os.environ["LANGSMITH_ACC"] = st.secrets['ld_rag']['LANGSMITH_ACC']
 url = f'{os.environ["LANGSMITH_ACC"]}/simple-rag'
 prompt_template = hub.pull(url)
 
-# if not check_password():
-#     st.stop()
 
 OPENAI_API_KEY = st.secrets['ld_rag']['OPENAI_KEY_ORG']
 llm_chat = ChatOpenAI(temperature=0.0, openai_api_key=OPENAI_API_KEY,
@@ -68,6 +66,9 @@ if input_question:
         index_options = ['ua_by_facebook', 'ua_by_telegram', 'ua_by_web', 'ua_by_youtube', 'dm_8_countries_twitter', 'dm_8_countries_telegram']
         selected_index = st.selectbox('Please choose index', index_options, key='index')
         st.write(f"We'll search the answer in index: {selected_index}")
+
+        if not check_password():
+            st.stop()
 
         # run search
         if st.button('RUN SEARCH'):
