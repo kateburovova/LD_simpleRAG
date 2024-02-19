@@ -8,7 +8,7 @@ from elasticsearch.exceptions import NotFoundError
 from angle_emb import AnglE, Prompts
 from langchain.prompts.chat import ChatPromptTemplate
 from langchain_community.chat_models import ChatOpenAI
-# from authentificate import check_password
+from authentificate import check_password
 
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = f"Tracing Streamlit RAG ES app"
@@ -19,8 +19,8 @@ os.environ["LANGSMITH_ACC"] = st.secrets['ld_rag']['LANGSMITH_ACC']
 url = f'{os.environ["LANGSMITH_ACC"]}/simple-rag'
 prompt_template = hub.pull(url)
 
-# if not check_password():
-#     st.stop()
+if not check_password():
+    st.stop()
 
 OPENAI_API_KEY = st.secrets['ld_rag']['OPENAI_KEY_ORG']
 llm_chat = ChatOpenAI(temperature=0.0, openai_api_key=OPENAI_API_KEY,
