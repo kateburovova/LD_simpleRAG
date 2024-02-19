@@ -35,7 +35,6 @@ input_question = None
 input_question = st.text_input("Ask your question")
 
 if input_question:
-
     angle = AnglE.from_pretrained('WhereIsAI/UAE-Large-V1', pooling_strategy='cls').cuda()
     angle.set_prompt(prompt=Prompts.C)
     vec = angle.encode({'text': input_question}, to_numpy=True)
@@ -57,14 +56,12 @@ if input_question:
     if selected_start_date and selected_end_date:
 
         # get input index
-        # index_options = ['ua_by_facebook', 'ua_by_telegram', 'ua_by_web', 'ua_by_youtube', 'dm_8_countries_twitter', 'dm_8_countries_telegram']
-        # selected_index = st.selectbox('Please choose index', index_options, key='index')
-        # st.write(f"We'll search the answer in index: {selected_index}")
+        index_options = ['ua_by_facebook', 'ua_by_telegram', 'ua_by_web', 'ua_by_youtube', 'dm_8_countries_twitter', 'dm_8_countries_telegram']
+        selected_index = st.selectbox('Please choose index', index_options, key='index')
+        st.write(f"We'll search the answer in index: {selected_index}")
 
-        selected_index = 'ua_by_facebook'
+        # selected_index = 'ua_by_facebook'
 
-        st.write(selected_index)
-        st.write(question_vector)
         #
         # # run search
         # if st.button('RUN SEARCH'):
