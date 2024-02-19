@@ -41,6 +41,8 @@ if input_question:
     vec = angle.encode({'text': input_question}, to_numpy=True)
     question_vector = vec.tolist()[0]
 
+    formatted_start_date, formatted_end_date = None, None
+
     # get input date
     selected_start_date = st.date_input("Select start date:")
     formatted_start_date = selected_start_date.strftime("%Y-%m-%d")
@@ -51,51 +53,54 @@ if input_question:
     formatted_end_date = selected_end_date.strftime("%Y-%m-%d")
     st.write("You selected end date:", selected_end_date)
 
-    # get input index
-    index_options = ['ua_by_facebook', 'ua_by_telegram', 'ua_by_web', 'ua_by_youtube', 'dm_8_countries_twitter', 'dm_8_countries_telegram']
-    selected_index = st.selectbox('Please choose index', index_options, key='index')
-    st.write(f"We'll search the answer in index: {selected_index}")
 
-    # run search
-    if st.button('RUN SEARCH'):
-        try:
-            texts_list = []
-            st.write(f'Running search for question: {input_question}')
-            es = Elasticsearch(f'https://{elastic_host}:{elastic_port}', api_key=api_key)
-            response = es.search(index=selected_index,
-                                 knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
-                                      "query_vector":  question_vector,
-                                      "k": 10,
-                                      "num_candidates": 10000,
-                                      "filter": {"range": {"date": {"gte": formatted_start_date,  "lte": formatted_end_date}}}})
+    if selected_start_date and selected_end_date:
 
-            for doc in response['hits']['hits']:
-                texts_list.append(doc['_source']['translated_text'])
+        # get input index
+        index_options = ['ua_by_facebook', 'ua_by_telegram', 'ua_by_web', 'ua_by_youtube', 'dm_8_countries_twitter', 'dm_8_countries_telegram']
+        selected_index = st.selectbox('Please choose index', index_options, key='index')
+        st.write(f"We'll search the answer in index: {selected_index}")
 
-            st.write('Searching for documents, please wait...')
+        # run search
+        if st.button('RUN SEARCH'):
+            try:
+                texts_list = []
+                st.write(f'Running search for question: {input_question}')
+                es = Elasticsearch(f'https://{elastic_host}:{elastic_port}', api_key=api_key)
+                response = es.search(index=selected_index,
+                                     knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
+                                          "query_vector":  question_vector,
+                                          "k": 10,
+                                          "num_candidates": 10000,
+                                          "filter": {"range": {"date": {"gte": formatted_start_date,  "lte": formatted_end_date}}}})
 
-            customer_messages = prompt_template.format_messages(
-                question=input_question,
-                texts=texts_list)
-            resp = llm_chat.invoke(customer_messages)
+                for doc in response['hits']['hits']:
+                    texts_list.append(doc['_source']['translated_text'])
 
-            st.markdown('### This is the GPT summary for the question:')
+                st.write('Searching for documents, please wait...')
 
-            st.write(resp.content)
+                customer_messages = prompt_template.format_messages(
+                    question=input_question,
+                    texts=texts_list)
+                resp = llm_chat.invoke(customer_messages)
 
-            st.write('******************')
+                st.markdown('### This is the GPT summary for the question:')
 
-            st.markdown('### These are the texts retrieved by search:')
+                st.write(resp.content)
 
-            for doc in response['hits']['hits']:
-                st.write(doc['_source']['translated_text'])
-                st.write()
-                st.write(doc['_score'])
                 st.write('******************')
 
-        except BadRequestError as e:
-            st.error(f'Failed to execute search (embeddings might be missing for this index): {e.info}')
-        except NotFoundError as e:
-            st.error(f'Index not found: {e.info}')
-        except Exception as e:
-            st.error(f'An unknown error occurred: {str(e)}')
+                st.markdown('### These are the texts retrieved by search:')
+
+                for doc in response['hits']['hits']:
+                    st.write(doc['_source']['translated_text'])
+                    st.write()
+                    st.write(doc['_score'])
+                    st.write('******************')
+
+            except BadRequestError as e:
+                st.error(f'Failed to execute search (embeddings might be missing for this index): {e.info}')
+            except NotFoundError as e:
+                st.error(f'Index not found: {e.info}')
+            except Exception as e:
+                st.error(f'An unknown error occurred: {str(e)}')
