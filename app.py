@@ -88,11 +88,10 @@ if input_question:
                                           "k": 5,
                                           "num_candidates": 1000,
                                           "filter": {"range": {"date": {"gte": formatted_start_date,  "lte": formatted_end_date}}}})
-                st.write('search successfull')
-            #     for doc in response['hits']['hits']:
-            #         texts_list.append(doc['_source']['translated_text'])
-            #
-            #     st.write('Searching for documents, please wait...')
+                for doc in response['hits']['hits']:
+                    texts_list.append(doc['_source']['translated_text'])
+
+                st.write('Searching for documents, please wait...')
             #
             #     customer_messages = prompt_template.format_messages(
             #         question=input_question,
