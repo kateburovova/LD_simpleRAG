@@ -8,7 +8,7 @@ from elasticsearch.exceptions import NotFoundError
 from angle_emb import AnglE, Prompts
 from langchain.prompts.chat import ChatPromptTemplate
 from langchain_community.chat_models import ChatOpenAI
-from authentificate import check_password
+# from authentificate import check_password
 
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = f"Tracing Streamlit RAG ES app"
