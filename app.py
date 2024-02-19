@@ -1,8 +1,7 @@
 import os
 import streamlit as st
 
-from langchain import hub
-from langchain import hub
+# from langchain import hub
 from elasticsearch import Elasticsearch
 from elasticsearch import BadRequestError
 from elasticsearch.exceptions import NotFoundError
