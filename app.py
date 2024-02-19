@@ -85,7 +85,7 @@ if input_question:
                                      knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
                                           "query_vector":  question_vector,
                                           "k": 5,
-                                          "num_candidates": 1000,
+                                          "num_candidates": 10000,
                                           "filter": {"range": {"date": {"gte": formatted_start_date,  "lte": formatted_end_date}}}})
                 for doc in response['hits']['hits']:
                     texts_list.append(doc['_source']['translated_text'])
