@@ -77,14 +77,14 @@ if input_question:
                 st.write(f'Running search for question: {input_question}')
                 # es = Elasticsearch(f'https://{elastic_host}:{elastic_port}', api_key=api_key)
                 try:
-                    es = Elasticsearch(f'https://{elastic_host}:{elastic_port}', api_key=api_key, timeout=30)
+                    es = Elasticsearch(f'https://{elastic_host}:{elastic_port}', api_key=api_key, request_timeout=30)
                 except Exception as e:
                     st.error(f'Failed to connect to Elasticsearch: {str(e)}')
 
                 response = es.search(index=selected_index,
                                      knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
                                           "query_vector":  question_vector,
-                                          "k": 5,
+                                          "k": 20,
                                           "num_candidates": 10000,
                                           "filter": {"range": {"date": {"gte": formatted_start_date,  "lte": formatted_end_date}}}})
                 for doc in response['hits']['hits']:
