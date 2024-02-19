@@ -19,19 +19,8 @@ os.environ["LANGSMITH_ACC"] = st.secrets['ld_rag']['LANGSMITH_ACC']
 url = f'{os.environ["LANGSMITH_ACC"]}/simple-rag'
 prompt_template = hub.pull(url)
 
-
-@st.cache(allow_output_mutation=True,
-          hash_funcs={"_thread.RLock": lambda _: None, "builtins.weakref": lambda _: None})
-def load_model():
-    angle_model = AnglE.from_pretrained('WhereIsAI/UAE-Large-V1',
-                                        pooling_strategy='cls')
-    angle_model.set_prompt(Prompts.C)
-    return angle_model
-
-angle = load_model()
-
-if not check_password():
-    st.stop()
+# if not check_password():
+#     st.stop()
 
 OPENAI_API_KEY = st.secrets['ld_rag']['OPENAI_KEY_ORG']
 llm_chat = ChatOpenAI(temperature=0.0, openai_api_key=OPENAI_API_KEY,
@@ -46,7 +35,15 @@ input_question = None
 input_question = st.text_input("Ask your question")
 
 if input_question:
+    @st.cache(allow_output_mutation=True,
+              hash_funcs={"_thread.RLock": lambda _: None, "builtins.weakref": lambda _: None})
+    def load_model():
+        angle_model = AnglE.from_pretrained('WhereIsAI/UAE-Large-V1',
+                                            pooling_strategy='cls')
+        angle_model.set_prompt(Prompts.C)
+        return angle_model
 
+    angle = load_model()
     # angle = AnglE.from_pretrained('WhereIsAI/UAE-Large-V1', pooling_strategy='cls').cuda()
     # angle.set_prompt(prompt=Prompts.C)
     vec = angle.encode({'text': input_question}, to_numpy=True)
@@ -86,7 +83,7 @@ if input_question:
                 response = es.search(index=selected_index,
                                      knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
                                           "query_vector":  question_vector,
-                                          "k": 10,
+                                          "k": 5,
                                           "num_candidates": 1000,
                                           "filter": {"range": {"date": {"gte": formatted_start_date,  "lte": formatted_end_date}}}})
                 for doc in response['hits']['hits']:
