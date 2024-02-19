@@ -39,7 +39,7 @@ if input_question:
               hash_funcs={"_thread.RLock": lambda _: None, "builtins.weakref": lambda _: None})
     def load_model():
         angle_model = AnglE.from_pretrained('WhereIsAI/UAE-Large-V1',
-                                            pooling_strategy='cls')  # Removed .cuda() for compatibility
+                                            pooling_strategy='cls')
         angle_model.set_prompt(Prompts.C)
         return angle_model
 
@@ -77,15 +77,13 @@ if input_question:
                 # es = Elasticsearch(f'https://{elastic_host}:{elastic_port}', api_key=api_key)
                 try:
                     es = Elasticsearch(f'https://{elastic_host}:{elastic_port}', api_key=api_key)
-                    info = es.info()
-                    st.write(info)  # Just to confirm connection works
                 except Exception as e:
                     st.error(f'Failed to connect to Elasticsearch: {str(e)}')
 
                 response = es.search(index=selected_index,
                                      knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
                                           "query_vector":  question_vector,
-                                          "k": 5,
+                                          "k": 20,
                                           "num_candidates": 1000,
                                           "filter": {"range": {"date": {"gte": formatted_start_date,  "lte": formatted_end_date}}}})
                 for doc in response['hits']['hits']:
