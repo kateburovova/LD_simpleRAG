@@ -43,17 +43,19 @@ if input_question:
     formatted_start_date, formatted_end_date = None, None
 
     # get input date
-    selected_start_date = st.date_input("Select start date:")
-    formatted_start_date = selected_start_date.strftime("%Y-%m-%d")
+    # selected_start_date = st.date_input("Select start date:")
+    # formatted_start_date = selected_start_date.strftime("%Y-%m-%d")
+    #
+    # st.write("You selected start date:", selected_start_date)
+    #
+    # selected_end_date = st.date_input("Select end date:")
+    # formatted_end_date = selected_end_date.strftime("%Y-%m-%d")
+    # st.write("You selected end date:", selected_end_date)
 
-    st.write("You selected start date:", selected_start_date)
-
-    selected_end_date = st.date_input("Select end date:")
-    formatted_end_date = selected_end_date.strftime("%Y-%m-%d")
-    st.write("You selected end date:", selected_end_date)
+    formatted_start_date, formatted_end_date = '2021-12-01', '2022-01-31'
 
 
-    if selected_start_date and selected_end_date:
+    if formatted_start_date and formatted_end_date:
 
         # get input index
         index_options = ['ua_by_facebook', 'ua_by_telegram', 'ua_by_web', 'ua_by_youtube', 'dm_8_countries_twitter', 'dm_8_countries_telegram']
