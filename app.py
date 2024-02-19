@@ -92,26 +92,26 @@ if input_question:
                     texts_list.append(doc['_source']['translated_text'])
 
                 st.write('Searching for documents, please wait...')
-            #
-            #     customer_messages = prompt_template.format_messages(
-            #         question=input_question,
-            #         texts=texts_list)
-            #     resp = llm_chat.invoke(customer_messages)
-            #
-            #     st.markdown('### This is the GPT summary for the question:')
-            #
-            #     st.write(resp.content)
-            #
-            #     st.write('******************')
-            #
-            #     st.markdown('### These are the texts retrieved by search:')
-            #
-            #     for doc in response['hits']['hits']:
-            #         st.write(doc['_source']['translated_text'])
-            #         st.write()
-            #         st.write(doc['_score'])
-            #         st.write('******************')
-            #
+
+                customer_messages = prompt_template.format_messages(
+                    question=input_question,
+                    texts=texts_list)
+                resp = llm_chat.invoke(customer_messages)
+
+                st.markdown('### This is the GPT summary for the question:')
+
+                st.write(resp.content)
+
+                st.write('******************')
+
+                st.markdown('### These are the texts retrieved by search:')
+
+                for doc in response['hits']['hits']:
+                    st.write(doc['_source']['translated_text'])
+                    st.write()
+                    st.write(doc['_score'])
+                    st.write('******************')
+
             except BadRequestError as e:
                 st.error(f'Failed to execute search (embeddings might be missing for this index): {e.info}')
             except NotFoundError as e:
