@@ -1,0 +1,11 @@
+streamlit
+altair
+pandas
+numpy
+angle-emb
+elasticsearch
+python-dotenv
+langchain
+langchain_openai
+langchainhub
+langchain-community
