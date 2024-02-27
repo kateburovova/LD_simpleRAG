@@ -61,7 +61,16 @@ if input_question:
     if formatted_start_date and formatted_end_date:
 
         # Get input index
-        index_options = ['ua_by_facebook', 'ua_by_telegram', 'ua_by_web', 'ua_by_youtube', 'dm_8_countries_twitter', 'dm_8_countries_telegram']
+        index_options = ['ua_by_facebook',
+                         'ua_by_telegram',
+                         'ua_by_web',
+                         'ua_by_youtube',
+                         'dm_8_countries_twitter',
+                         'dm_8_countries_telegram',
+                         'ndi_lithuania_web',
+                         'ndi_lithuania_tg',
+                         'ndi_lithuania_youtube',
+                         'ndi_lithuania_all']
         selected_index = st.selectbox('Please choose index', index_options, key='index')
         st.write(f"We'll search the answer in index: {selected_index}")
 
