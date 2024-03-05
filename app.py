@@ -69,7 +69,11 @@ if input_question:
                          'dm_8_countries_telegram',
                          'ndi_lithuania_web',
                          'ndi_lithuania_tg',
-                         'ndi_lithuania_youtube']
+                         'ndi_lithuania_youtube',
+                         'recovery_win_facebook',
+                         'recovery_win_telegram',
+                         'recovery_win_web',
+                         'recovery_win_twitter']
         selected_index = st.selectbox('Please choose index', index_options, key='index')
         st.write(f"We'll search the answer in index: {selected_index}")
 
