@@ -67,7 +67,7 @@ if input_question:
                          'ua_by_youtube',
                          'dm_8_countries_twitter',
                          'dm_8_countries_telegram',
-                         'ndi-lithuania_instagram',
+                         'ndi-lithuania-instagram',
                          'ndi-lithuania-web',
                          'ndi-lithuania-youtube',
                          'ndi-lithuania-telegram',
