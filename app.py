@@ -62,7 +62,7 @@ if input_question:
 
         # Get input index
         index_options = [
-            'detector_media_tiktok',
+            'detector-media-tiktok',
             'ua_by_facebook',
             'ua_by_telegram',
             'ua_by_web',
