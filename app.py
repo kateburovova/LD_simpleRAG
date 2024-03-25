@@ -61,21 +61,23 @@ if input_question:
     if formatted_start_date and formatted_end_date:
 
         # Get input index
-        index_options = ['ua_by_facebook',
-                         'ua_by_telegram',
-                         'ua_by_web',
-                         'ua_by_youtube',
-                         'dm_8_countries_twitter',
-                         'dm_8_countries_telegram',
-                         'ndi-lithuania-instagram',
-                         'ndi-lithuania-web',
-                         'ndi-lithuania-youtube',
-                         'ndi-lithuania-telegram',
-                         'ndi-lithuania-initial-kivu-twitter',
-                         'recovery_win_facebook',
-                         'recovery_win_telegram',
-                         'recovery_win_web',
-                         'recovery_win_twitter']
+        index_options = [
+            'detector_media_tiktok',
+            'ua_by_facebook',
+            'ua_by_telegram',
+            'ua_by_web',
+            'ua_by_youtube',
+            'dm_8_countries_twitter',
+            'dm_8_countries_telegram',
+            'ndi-lithuania-instagram',
+            'ndi-lithuania-web',
+            'ndi-lithuania-youtube',
+            'ndi-lithuania-telegram',
+            'ndi-lithuania-initial-kivu-twitter',
+            'recovery_win_facebook',
+            'recovery_win_telegram',
+            'recovery_win_web',
+            'recovery_win_twitter']
         selected_index = st.selectbox('Please choose index', index_options, key='index')
         st.write(f"We'll search the answer in index: {selected_index}")
 
