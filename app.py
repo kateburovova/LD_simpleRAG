@@ -117,7 +117,7 @@ if input_question:
 
                 # Print GPT summary
                 st.markdown('### This is the GPT summary for the question:')
-                st.write(resp.content)
+                st.markdown(resp.content)
                 st.write('******************')
                 st.markdown('### These are the texts retrieved by search:')
 
