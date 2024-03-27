@@ -109,10 +109,14 @@ if input_question:
 
                 st.write('Searching for documents, please wait...')
 
+                # formatting urls so they work properly within streamlit
+                corrected_texts_list = [(text, 'https://' + url if not url.startswith('http://') and not url.startswith(
+                    'https://') else url) for text, url in texts_list]
+
                 # Get summary for the retrieved data
                 customer_messages = prompt_template.format_messages(
                     question=input_question,
-                    texts=texts_list)
+                    texts=corrected_texts_list)
                 resp = llm_chat.invoke(customer_messages)
 
                 # Print GPT summary
