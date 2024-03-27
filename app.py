@@ -62,12 +62,12 @@ if input_question:
 
         # Get input index
         index_options = [
-            'detector-media-tiktok',
+            # 'detector-media-tiktok',
             'ua_by_facebook',
             'ua_by_telegram',
             'ua_by_web',
             'ua_by_youtube',
-            'dm_8_countries_twitter',
+            'dm-8-countries-twitter',
             'dm_8_countries_telegram',
             'ndi-lithuania-instagram',
             'ndi-lithuania-web',
