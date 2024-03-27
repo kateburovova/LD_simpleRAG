@@ -6,8 +6,10 @@ from elasticsearch import Elasticsearch
 from elasticsearch import BadRequestError
 from elasticsearch.exceptions import NotFoundError
 from angle_emb import AnglE, Prompts
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from authentificate import check_password
+from utils import get_unique_category_values,populate_default_values, index_options, populate_terms,create_must_term
+
 
 # Init Langchain and Langsmith services
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
@@ -23,10 +25,38 @@ OPENAI_API_KEY = st.secrets['ld_rag']['OPENAI_KEY_ORG']
 llm_chat = ChatOpenAI(temperature=0.0, openai_api_key=OPENAI_API_KEY,
              model_name='gpt-4-turbo-preview')
 
-# Load Elastic creds
-elastic_host = st.secrets['ld_rag']['ELASTIC_HOST']
-elastic_port = st.secrets['ld_rag']['ELASTIC_PORT']
-api_key = st.secrets['ld_rag']['ELASTIC_API']
+# # Load Elastic creds
+# elastic_host = st.secrets['ld_rag']['ELASTIC_HOST']
+# elastic_port = st.secrets['ld_rag']['ELASTIC_PORT']
+# api_key = st.secrets['ld_rag']['ELASTIC_API']
+
+es_config = {
+    'host': st.secrets['ld_rag']['ELASTIC_HOST'],
+    'port': st.secrets['ld_rag']['ELASTIC_PORT'],
+    'api_key': st.secrets['ld_rag']['ELASTIC_API']
+}
+
+########## APP start ###########
+
+# Get input index
+selected_index = None
+selected_index = st.selectbox('Please choose index', index_options, index=None, placeholder="Select value")
+st.write(f"We'll search the answer in index: {selected_index}")
+
+if selected_index:
+    category_values, language_values, country_values = populate_default_values(selected_index, es_config)
+
+    with st.popover("Tap to define filters"):
+        st.markdown("Hihi 👋")
+        st.markdown("If Any remains selected or no values at all, filtering will not be applied to this field.")
+        st.markdown("Start typing to find the option faster.")
+        categories_selected = st.multiselect('Select "Any" or choose one or more categories', category_values, default=['Any'])
+        languages_selected = st.multiselect('Select "Any" or choose one or more languages', language_values, default=['Any'])
+        countries_selected = st.multiselect('Select "Any" or choose one or more countries', country_values, default=['Any'])
+
+    category_terms = populate_terms(categories_selected, 'category.keyword')
+    language_terms = populate_terms(languages_selected, 'language.keyword')
+    country_terms = populate_terms(countries_selected, 'country.keyword')
 
 # create prompt vector
 input_question = None
@@ -34,18 +64,10 @@ st.markdown('### Please enter your question:')
 input_question = st.text_input("Enter your question here (phrased as if you ask a human)")
 
 
-with st.popover("Tap to define filters"):
-    st.markdown("Hello World 👋")
-    options = st.multiselect('options available', ['option1', 'option2'], default=['option1', 'option2'])
-    name = st.text_input("What's your name?")
-
-st.write("Your options:", options)
-
 if input_question:
 
     formatted_start_date, formatted_end_date = None, None
-    @st.cache(allow_output_mutation=True,
-              hash_funcs={"_thread.RLock": lambda _: None, "builtins.weakref": lambda _: None})
+    @st.cache_resource(hash_funcs={"_thread.RLock": lambda _: None, "builtins.weakref": lambda _: None})
     def load_model():
         angle_model = AnglE.from_pretrained('WhereIsAI/UAE-Large-V1',
                                             pooling_strategy='cls')
@@ -64,31 +86,14 @@ if input_question:
     selected_end_date = st.date_input("Select end date:")
     formatted_end_date = selected_end_date.strftime("%Y-%m-%d")
     st.write("You selected end date:", selected_end_date)
+    must_term = create_must_term(category_terms,
+                                 language_terms,
+                                 country_terms,
+                                 formatted_start_date=formatted_start_date,
+                                 formatted_end_date=formatted_end_date)
 
 
     if formatted_start_date and formatted_end_date:
-
-        # Get input index
-        index_options = [
-        # 'detector-media-tiktok',
-        'ua-by-facebook',
-        'ua-by-telegram',
-        'ua-by-web',
-        'ua-by-youtube',
-        'dm-8-countries-twitter',
-        'dm-8-countries-telegram',
-        'ndi-lithuania-instagram',
-        'ndi-lithuania-web',
-        'ndi-lithuania-youtube',
-        'ndi-lithuania-telegram',
-        'ndi-lithuania-initial-kivu-twitter',
-        'recovery-win-facebook',
-        'recovery-win-telegram',
-        'recovery-win-web',
-        'recovery-win-twitter',
-        'recovery-win-comments-telegram']
-        selected_index = st.selectbox('Please choose index', index_options, key='index')
-        st.write(f"We'll search the answer in index: {selected_index}")
 
         # Authorise user
         if not check_password():
@@ -100,17 +105,24 @@ if input_question:
                 texts_list = []
                 st.write(f'Running search for question: {input_question}')
                 try:
-                    es = Elasticsearch(f'https://{elastic_host}:{elastic_port}', api_key=api_key, request_timeout=300)
+                    es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"], request_timeout=300)
                 except Exception as e:
                     st.error(f'Failed to connect to Elasticsearch: {str(e)}')
 
                 response = es.search(index=selected_index,
-                                     size=50,
+                                     size=30,
                                      knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
                                           "query_vector":  question_vector,
                                           "k": 20,
                                           "num_candidates": 10000,
-                                          "filter": {"range": {"date": {"gte": formatted_start_date,  "lte": formatted_end_date}}}})
+                                          "filter": {
+                                              "bool": {
+                                                  "must": must_term
+                                              }
+                                          }
+                                          }
+                                     )
+
                 for doc in response['hits']['hits']:
                     # texts_list.append(doc['_source']['translated_text'])
                     texts_list.append((doc['_source']['translated_text'], doc['_source']['url']))
@@ -136,6 +148,7 @@ if input_question:
                 # Print source texts
                 for doc in response['hits']['hits']:
                     st.write(doc['_source']['translated_text'])
+                    st.write((doc['_source']['country'],doc['_source']['language'],doc['_source']['category']))
                     st.write()
                     st.write(doc['_score'])
                     st.write('******************')
