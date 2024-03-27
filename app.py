@@ -36,9 +36,7 @@ input_question = st.text_input("Enter your question here (phrased as if you ask 
 
 with st.popover("Tap to define filters"):
     st.markdown("Hello World 👋")
-    options = st.multiselect('options available', ['option1', 'option1'], default=None, format_func=None, key=None, help=None,
-                   on_change=None, args=None, kwargs=None, placeholder="Choose an option",
-                   disabled=False, label_visibility="visible")
+    options = st.multiselect('options available', ['option1', 'option1'])
     name = st.text_input("What's your name?")
 
 st.write("Your options:", options)
