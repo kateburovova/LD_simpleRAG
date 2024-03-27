@@ -100,5 +100,47 @@ def create_must_term(category_terms, language_terms, country_terms, formatted_st
     return must_term
 
 
+import pandas as pd
+
+
+def create_dataframe_from_response(response):
+    """
+    Creates a pandas DataFrame from Elasticsearch response data.
+    Returns:
+        pd.DataFrame: A DataFrame containing the selected fields from the response.
+    """
+    try:
+        selected_documents = []
+
+        if 'hits' not in response or 'hits' not in response['hits']:
+            print("No data found in the response.")
+            return pd.DataFrame()  # Return an empty DataFrame
+
+        for doc in response['hits']['hits']:
+            selected_doc = {
+                'date': doc['_source'].get('date', ''),
+                'text': doc['_source'].get('text', ''),
+                'translated_text': doc['_source'].get('translated_text', ''),
+                'url': doc['_source'].get('url', ''),
+                'country': doc['_source'].get('country', ''),
+                'language': doc['_source'].get('language', ''),
+                'category': doc['_source'].get('category', ''),
+                'id': doc.get('_id', '')
+            }
+            selected_documents.append(selected_doc)
+
+        df_selected_fields = pd.DataFrame(selected_documents)
+
+        if 'date' in df_selected_fields.columns:
+            df_selected_fields['date'] = pd.to_datetime(df_selected_fields['date']).dt.date
+
+        return df_selected_fields
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return pd.DataFrame()
+
+
+
 
 
