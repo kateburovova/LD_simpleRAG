@@ -33,6 +33,13 @@ input_question = None
 st.markdown('### Please enter your question:')
 input_question = st.text_input("Enter your question here (phrased as if you ask a human)")
 
+
+with st.popover("Tap to define filters"):
+    st.markdown("Hello World 👋")
+    name = st.text_input("What's your name?")
+
+st.write("Your name:", name)
+
 if input_question:
 
     formatted_start_date, formatted_end_date = None, None
