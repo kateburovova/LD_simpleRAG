@@ -8,7 +8,7 @@ from elasticsearch.exceptions import NotFoundError
 from angle_emb import AnglE, Prompts
 from langchain_openai import ChatOpenAI
 from authentificate import check_password
-from utils import get_unique_category_values,populate_default_values, index_options, populate_terms,create_must_term
+from utils import get_unique_category_values,populate_default_values, index_options, populate_terms,create_must_term, create_dataframe_from_response
 
 
 # Init Langchain and Langsmith services
@@ -146,12 +146,14 @@ if input_question:
                 st.markdown('### These are the texts retrieved by search:')
 
                 # Print source texts
-                for doc in response['hits']['hits']:
-                    st.write(doc['_source']['translated_text'])
-                    st.write((doc['_source']['country'],doc['_source']['language'],doc['_source']['category']))
-                    st.write()
-                    st.write(doc['_score'])
-                    st.write('******************')
+                # for doc in response['hits']['hits']:
+                #     st.write(doc['_source']['translated_text'])
+                #     st.write((doc['_source']['country'],doc['_source']['language'],doc['_source']['category']))
+                #     st.write()
+                #     st.write(doc['_score'])
+                #     st.write('******************')
+                df = create_dataframe_from_response(response)
+                st.dataframe(df)
 
             except BadRequestError as e:
                 st.error(f'Failed to execute search (embeddings might be missing for this index): {e.info}')
