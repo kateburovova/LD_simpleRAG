@@ -11,7 +11,7 @@ from authentificate import check_password
 
 # Init Langchain and Langsmith services
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_PROJECT"] = f"Tracing Streamlit RAG ES app"
+os.environ["LANGCHAIN_PROJECT"] = f"rag_app : summarization : production"
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGCHAIN_API_KEY"] = st.secrets['ld_rag']['LANGCHAIN_API_KEY']
 os.environ["LANGSMITH_ACC"] = st.secrets['ld_rag']['LANGSMITH_ACC']
@@ -62,22 +62,23 @@ if input_question:
 
         # Get input index
         index_options = [
-            # 'detector-media-tiktok',
-            'ua_by_facebook',
-            'ua_by_telegram',
-            'ua_by_web',
-            'ua_by_youtube',
-            'dm-8-countries-twitter',
-            'dm_8_countries_telegram',
-            'ndi-lithuania-instagram',
-            'ndi-lithuania-web',
-            'ndi-lithuania-youtube',
-            'ndi-lithuania-telegram',
-            'ndi-lithuania-initial-kivu-twitter',
-            'recovery_win_facebook',
-            'recovery_win_telegram',
-            'recovery_win_web',
-            'recovery_win_twitter']
+        # 'detector-media-tiktok',
+        'ua-by-facebook',
+        'ua-by-telegram',
+        'ua-by-web',
+        'ua-by-youtube',
+        'dm-8-countries-twitter',
+        'dm-8-countries-telegram',
+        'ndi-lithuania-instagram',
+        'ndi-lithuania-web',
+        'ndi-lithuania-youtube',
+        'ndi-lithuania-telegram',
+        'ndi-lithuania-initial-kivu-twitter',
+        'recovery-win-facebook',
+        'recovery-win-telegram',
+        'recovery-win-web',
+        'recovery-win-twitter',
+        'recovery-win-comments-telegram']
         selected_index = st.selectbox('Please choose index', index_options, key='index')
         st.write(f"We'll search the answer in index: {selected_index}")
 
@@ -96,13 +97,15 @@ if input_question:
                     st.error(f'Failed to connect to Elasticsearch: {str(e)}')
 
                 response = es.search(index=selected_index,
+                                     size=50,
                                      knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
                                           "query_vector":  question_vector,
                                           "k": 20,
                                           "num_candidates": 10000,
                                           "filter": {"range": {"date": {"gte": formatted_start_date,  "lte": formatted_end_date}}}})
                 for doc in response['hits']['hits']:
-                    texts_list.append(doc['_source']['translated_text'])
+                    # texts_list.append(doc['_source']['translated_text'])
+                    texts_list.append((doc['_source']['translated_text'], doc['_source']['url']))
 
                 st.write('Searching for documents, please wait...')
 
