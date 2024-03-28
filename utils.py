@@ -47,7 +47,7 @@ def populate_default_values(index_name, es_config):
     return sorted(category_values), sorted(language_values), sorted(country_values)
 
 index_options = [
-    # 'detector-media-tiktok',
+    'detector-media-tiktok',
     'ua-by-facebook',
     'ua-by-telegram',
     'ua-by-web',
@@ -89,6 +89,9 @@ project_indexes = {
         'recovery-win-web',
         'recovery-win-twitter',
         'recovery-win-comments-telegram'
+    ],
+    'detector-media': [
+        'detector-media-tiktok'
     ]
 }
 flat_index_list = [index for indexes in project_indexes.values() for index in indexes]
@@ -232,7 +235,7 @@ def search_elastic_below_threshold(es_config, selected_index, question_vector, m
                                   "query_vector": question_vector,
                                   "k": max_doc_num,
                                   "num_candidates": 10000,
-                                  "similarity": 20, # l2 norm, so not the [0,1]
+                                  # "similarity": 20, # l2 norm, so not the [0,1]
                                   "filter": {
                                       "bool": {
                                           "must": must_term
