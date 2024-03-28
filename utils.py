@@ -211,7 +211,7 @@ def display_distribution_charts(df):
                              title='Country Distribution', hole=0.4)
         col3.plotly_chart(fig_country, use_container_width=True)
 
-def create_dataframe_from_response_filtered(response, score_threshold=60):
+def create_dataframe_from_response_filtered(response, score_threshold=0.6):
     records = []
     for hit in response['hits']['hits']:
         if hit['_score'] >= score_threshold:
