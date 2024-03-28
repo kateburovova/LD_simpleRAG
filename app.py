@@ -162,7 +162,11 @@ if input_question:
 
                 display_distribution_charts(df)
 
-                tally_form_url = 'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1'
+                # tally_form_url = 'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1'
+                # components.iframe(tally_form_url, width=700, height=500, scrolling=True)
+                prefilled_value = "https://smith.langchain.com/o/2e725250-e617-4fde-9e57-409055af96f8/projects/p/4d4a23f4-d0e4-4c73-ae2a-76dfb006b670?&peek=1918e5a1-4b5c-4f33-8985-04f9c75b4584"
+
+                tally_form_url = 'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1&LangSmith={prefilled_value}'
                 components.iframe(tally_form_url, width=700, height=500, scrolling=True)
 
             except BadRequestError as e:
