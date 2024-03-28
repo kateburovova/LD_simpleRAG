@@ -221,7 +221,7 @@ def create_dataframe_from_response_filtered(response, score_threshold=60):
 
     return df
 
-def search_elastic_below_threshold(es_config, selected_index, question_vector, must_term, max_doc_num=100000):
+def search_elastic_below_threshold(es_config, selected_index, question_vector, must_term, max_doc_num=10000):
     try:
         es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"],
                            request_timeout=600)
