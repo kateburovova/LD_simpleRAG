@@ -10,7 +10,7 @@ from elasticsearch.exceptions import NotFoundError
 from angle_emb import AnglE, Prompts
 from langchain_openai import ChatOpenAI
 from authentificate import check_password
-from utils import get_unique_category_values,populate_default_values, index_options, populate_terms,create_must_term, create_dataframe_from_response
+from utils import display_category_language_charts,populate_default_values, index_options, populate_terms,create_must_term, create_dataframe_from_response
 
 
 # Init Langchain and Langsmith services
@@ -108,7 +108,7 @@ if input_question:
                 texts_list = []
                 st.write(f'Running search for question: {input_question}')
                 try:
-                    es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"], request_timeout=300)
+                    es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"], request_timeout=600)
                 except Exception as e:
                     st.error(f'Failed to connect to Elasticsearch: {str(e)}')
 
@@ -151,34 +151,33 @@ if input_question:
                 df = create_dataframe_from_response(response)
                 st.dataframe(df)
 
-                if not df.empty and 'category' in df.columns:
-                    category_counts = df['category'].value_counts().reset_index()
-                    category_counts.columns = ['category', 'count']
+                display_category_language_charts(df)
 
-                    fig = px.bar(category_counts, x='count', y='category',
-                                 title='Category Distribution',
-                                 orientation='h',
-                                 color='count',
-                                 color_continuous_scale=px.colors.sequential.Viridis)
+                # if not df.empty and 'category' in df.columns:
+                #     category_counts = df['category'].value_counts().reset_index()
+                #     category_counts.columns = ['category', 'count']
+                #
+                #     fig = px.bar(category_counts, x='count', y='category',
+                #                  title='Category Distribution',
+                #                  orientation='h',
+                #                  color='count',
+                #                  color_continuous_scale=px.colors.sequential.Viridis)
+                #
+                #     fig.update_layout(
+                #         xaxis_title="Number of Posts",
+                #         yaxis_title="Categories",
+                #         coloraxis_showscale=False,
+                #         margin=dict(t=40, b=0, l=0, r=0),
+                #         yaxis={'categoryorder': 'total ascending'}
+                #     )
+                #
+                #     st.plotly_chart(fig)
+                # else:
+                #     st.write("No category data available to display.")
 
-                    fig.update_layout(
-                        xaxis_title="Number of Posts",
-                        yaxis_title="Categories",
-                        coloraxis_showscale=False,
-                        margin=dict(t=40, b=0, l=0, r=0),
-                        yaxis={'categoryorder': 'total ascending'}
-                    )
 
-                    st.plotly_chart(fig)
-                else:
-                    st.write("No category data available to display.")
-
-                if st.button('Please leave a review 👆', key='review_button'):
-                    st.session_state['review_clicked'] = True
-
-                if 'review_clicked' in st.session_state and st.session_state['review_clicked']:
-                    tally_form_url = 'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1'
-                    components.iframe(tally_form_url, width=700, height=500, scrolling=True)
+                tally_form_url = 'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1'
+                components.iframe(tally_form_url, width=700, height=500, scrolling=True)
 
             except BadRequestError as e:
                 st.error(f'Failed to execute search (embeddings might be missing for this index): {e.info}')

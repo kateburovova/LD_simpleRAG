@@ -1,3 +1,7 @@
+import pandas as pd
+import streamlit as st
+
+import plotly.express as px
 from elasticsearch import Elasticsearch
 import logging
 
@@ -57,13 +61,6 @@ index_options = [
     'recovery-win-web',
     'recovery-win-twitter',
     'recovery-win-comments-telegram']
-
-# def compile_terms(term):
-#     if "Any" in term:
-#         result = None
-#     else:
-#         result = term
-#     return result
 
 
 def populate_terms(selected_items, field):
@@ -139,6 +136,61 @@ def create_dataframe_from_response(response):
     except Exception as e:
         print(f"An error occurred: {e}")
         return pd.DataFrame()
+
+def display_category_language_charts(df):
+    """
+    Displays horizontal bar charts for category and language distributions side by side in Streamlit.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the data.
+    """
+    col1, col2 = st.columns(2)
+
+    # Column 1: Category Distribution Plot
+    if not df.empty and 'category' in df.columns:
+        category_counts = df['category'].value_counts().reset_index()
+        category_counts.columns = ['category', 'count']
+
+        fig_category = px.bar(category_counts, x='count', y='category',
+                              title='Category Distribution',
+                              orientation='h',
+                              color='count',
+                              color_continuous_scale=px.colors.sequential.Viridis)
+
+        fig_category.update_layout(
+            xaxis_title="Number of Posts",
+            yaxis_title="Categories",
+            coloraxis_showscale=False,
+            margin=dict(t=40, b=0, l=0, r=0),
+            yaxis={'categoryorder': 'total ascending'}
+        )
+
+        col1.plotly_chart(fig_category)
+    else:
+        col1.write("No category data available to display.")
+
+    # Column 2: Language Distribution Plot
+    if not df.empty and 'language' in df.columns:
+        language_counts = df['language'].value_counts().reset_index()
+        language_counts.columns = ['language', 'count']
+
+        fig_language = px.bar(language_counts, x='count', y='language',
+                              title='Language Distribution',
+                              orientation='h',
+                              color='count',
+                              color_continuous_scale=px.colors.sequential.Plasma)
+
+        fig_language.update_layout(
+            xaxis_title="Number of Posts",
+            yaxis_title="Languages",
+            coloraxis_showscale=False,
+            margin=dict(t=40, b=0, l=0, r=0),
+            yaxis={'categoryorder': 'total ascending'}
+        )
+
+        col2.plotly_chart(fig_language)
+    else:
+        col2.write("No language data available to display.")
 
 
 
