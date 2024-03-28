@@ -189,7 +189,7 @@ if input_question:
                 # Send rating to Tally
                 execution_time = round(end_time - start_time, 2)
                 tally_form_url = f'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1&run_id={run_id}&time={execution_time}'
-                components.iframe(tally_form_url, width=700, height=500, scrolling=True)
+                components.iframe(tally_form_url, width=700, height=800, scrolling=True)
 
             except BadRequestError as e:
                 st.error(f'Failed to execute search (embeddings might be missing for this index): {e.info}')
