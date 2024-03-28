@@ -23,13 +23,12 @@ os.environ["LANGCHAIN_PROJECT"] = f"rag_app : summarization : production"
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGCHAIN_API_KEY"] = st.secrets['ld_rag']['LANGCHAIN_API_KEY']
 os.environ["LANGSMITH_ACC"] = st.secrets['ld_rag']['LANGSMITH_ACC']
-url = f'{os.environ["LANGSMITH_ACC"]}/simple-rag'
-prompt_template = hub.pull(url)
+
 
 # Init openai model
 OPENAI_API_KEY = st.secrets['ld_rag']['OPENAI_KEY_ORG']
 llm_chat = ChatOpenAI(temperature=0.0, openai_api_key=OPENAI_API_KEY,
-             model_name='gpt-4-turbo-preview')
+             model_name='gpt-4-1106-preview')
 
 es_config = {
     'host': st.secrets['ld_rag']['ELASTIC_HOST'],
@@ -40,8 +39,16 @@ es_config = {
 ########## APP start ###########
 st.set_page_config(layout="wide")
 
-# Get input index
+# Get input parameters
 st.markdown('### Please select search parameters 🔎')
+
+# Get format and pull relevant prompt
+format_choice = st.radio("Choose the preferred output format:", ['Summary', 'Alert'], index=None)
+if format_choice == 'Alert':
+    url = f'{os.environ["LANGSMITH_ACC"]}/simple-rag'
+else:
+    url = f'{os.environ["LANGSMITH_ACC"]}/simple-rag:9388b291'
+prompt_template = hub.pull(url)
 
 selected_index = None
 search_option = st.radio("Choose Specific Indexes if you want to search one or more different indexes, choose All Project Indexes to select all indexes within a project.",
@@ -172,7 +179,7 @@ if input_question:
                 st.dataframe(df)
                 display_distribution_charts(df)
 
-                st.write(f'Running search for all relevant texts for statistics calculation, please wait...')
+                st.write(f'Running search for all relevant texts for statistics calculation. This can take a while, please wait...')
                 df_filtered = search_elastic_below_threshold(es_config, selected_index, question_vector, must_term)
 
                 st.markdown('### These are all texts above 60% relevance threshold:')

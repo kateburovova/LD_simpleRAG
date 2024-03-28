@@ -211,7 +211,7 @@ def display_distribution_charts(df):
                              title='Country Distribution', hole=0.4)
         col3.plotly_chart(fig_country, use_container_width=True)
 
-def create_dataframe_from_response_filtered(response, score_threshold=0.6):
+def create_dataframe_from_response_filtered(response, score_threshold=0.7):
     records = []
     for hit in response['hits']['hits']:
         if hit['_score'] >= score_threshold:
@@ -233,7 +233,7 @@ def search_elastic_below_threshold(es_config, selected_index, question_vector, m
                              size=max_doc_num,
                              knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
                                   "query_vector": question_vector,
-                                  "k": 30,
+                                  "k": 100,
                                   "num_candidates": 10000,
                                   # "similarity": 20, # l2 norm, so not the [0,1]
                                   "filter": {
