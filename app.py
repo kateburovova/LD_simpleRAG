@@ -1,9 +1,11 @@
 import os
 import streamlit as st
+import time
 import plotly.express as px
 import streamlit.components.v1 as components
 
 from langchain import hub
+from langchain import callbacks
 from elasticsearch import Elasticsearch
 from elasticsearch import BadRequestError
 from elasticsearch.exceptions import NotFoundError
@@ -113,6 +115,7 @@ if input_question:
 
         # Run search
         if st.button('RUN SEARCH'):
+            start_time = time.time()
             try:
                 texts_list = []
                 st.write(f'Running search for question: {input_question}')
@@ -149,7 +152,11 @@ if input_question:
                 customer_messages = prompt_template.format_messages(
                     question=input_question,
                     texts=corrected_texts_list)
-                resp = llm_chat.invoke(customer_messages)
+
+                with callbacks.collect_runs() as cb:
+                    resp = llm_chat.invoke(customer_messages)
+                    run_id = cb.traced_runs[0].id
+                end_time = time.time()
 
                 # Print GPT summary
                 st.markdown('### This is the GPT summary for the question:')
@@ -162,11 +169,8 @@ if input_question:
 
                 display_distribution_charts(df)
 
-                # tally_form_url = 'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1'
-                # components.iframe(tally_form_url, width=700, height=500, scrolling=True)
-                prefilled_id = "1918e5a1-4b5c-4f33-8985-04f9c75b4584"
-                prefilled_time = 10
-                tally_form_url = f'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1&run_id={prefilled_id}&time={prefilled_time}'
+                execution_time = round(end_time - start_time, 2)
+                tally_form_url = f'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1&run_id={run_id}&time={execution_time}'
                 components.iframe(tally_form_url, width=700, height=500, scrolling=True)
 
             except BadRequestError as e:
