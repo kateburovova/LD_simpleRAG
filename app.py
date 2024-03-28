@@ -40,14 +40,17 @@ es_config = {
 st.set_page_config(layout="wide")
 
 # Get input index
+st.markdown('### Please select search parameters 🔎')
+
 selected_index = None
-search_option = st.radio("Choose your search option", ['Specific Indexes', 'All Project Indexes'])
+search_option = st.radio("Choose Specific Indexes if you want to search one or more different indexes, choose All Project Indexes to select all indexes within a project.",
+                         ['Specific Indexes', 'All Project Indexes'])
 
 if search_option == 'Specific Indexes':
     selected_indexes = st.multiselect('Please choose one or more indexes', flat_index_list, default=None, placeholder="Select one or more indexes")
     if selected_indexes:
         selected_index = ",".join(selected_indexes)
-        st.write(f"We'll search the answer in indexes: {', '.join(selected_indexes)}")
+        st.write(f"We'll search in: {', '.join(selected_indexes)}")
     else:
         selected_index = None
 else:
@@ -55,15 +58,14 @@ else:
     if project_choice:
         selected_indexes = project_indexes[project_choice]
         selected_index = ",".join(selected_indexes)
-        st.write(f"We'll search the answer across all indexes for project: {project_choice}")
+        st.write(f"We'll search in: {', '.join(selected_indexes)}")
 
 if selected_index:
     category_values, language_values, country_values = populate_default_values(selected_index, es_config)
 
-    with st.popover("Tap to define filters"):
+    with st.popover("Tap to refine filters"):
         st.markdown("Hihi 👋")
-        st.markdown("If Any remains selected or no values at all, filtering will not be applied to this field.")
-        st.markdown("Start typing to find the option faster.")
+        st.markdown("If Any remains selected or no values at all, filtering will not be applied to this field. Start typing to find the option faster.")
         categories_selected = st.multiselect('Select "Any" or choose one or more categories', category_values, default=['Any'])
         languages_selected = st.multiselect('Select "Any" or choose one or more languages', language_values, default=['Any'])
         countries_selected = st.multiselect('Select "Any" or choose one or more countries', country_values, default=['Any'])
@@ -72,9 +74,9 @@ if selected_index:
     language_terms = populate_terms(languages_selected, 'language.keyword')
     country_terms = populate_terms(countries_selected, 'country.keyword')
 
-# create prompt vector
+# Create prompt vector
 input_question = None
-st.markdown('### Please enter your question:')
+st.markdown('### Please enter your question')
 input_question = st.text_input("Enter your question here (phrased as if you ask a human)")
 
 
@@ -139,12 +141,11 @@ if input_question:
                                      )
 
                 for doc in response['hits']['hits']:
-                    # texts_list.append(doc['_source']['translated_text'])
                     texts_list.append((doc['_source']['translated_text'], doc['_source']['url']))
 
-                st.write('Searching for documents, please wait...')
+                st.write("Searching for documents, please wait...")
 
-                # formatting urls so they work properly within streamlit
+                # Format urls so they work properly within streamlit
                 corrected_texts_list = [(text, 'https://' + url if not url.startswith('http://') and not url.startswith(
                     'https://') else url) for text, url in texts_list]
 
@@ -167,8 +168,10 @@ if input_question:
                 df = create_dataframe_from_response(response)
                 st.dataframe(df)
 
+                # Display table
                 display_distribution_charts(df)
 
+                # Send rating to Tally
                 execution_time = round(end_time - start_time, 2)
                 tally_form_url = f'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1&run_id={run_id}&time={execution_time}'
                 components.iframe(tally_form_url, width=700, height=500, scrolling=True)
