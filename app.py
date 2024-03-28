@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 import plotly.express as px
+import streamlit.components.v1 as components
 
 from langchain import hub
 from elasticsearch import Elasticsearch
@@ -144,6 +145,14 @@ if input_question:
                 st.markdown('### This is the GPT summary for the question:')
                 st.markdown(resp.content)
                 st.write('******************')
+
+                tally_form_code = '''
+                <iframe data-tally-src="https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="157" frameborder="0" marginheight="0" marginwidth="0" title="Test form"></iframe><script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+                '''
+                tally_form_url = 'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1'
+                # st.markdown(tally_form_code, unsafe_allow_html=True)
+                components.iframe(tally_form_url, width=700, height=500, scrolling=True)
+
                 st.markdown('### These are the texts retrieved by search:')
 
                 # Print source texts
@@ -153,12 +162,6 @@ if input_question:
                 #     st.write()
                 #     st.write(doc['_score'])
                 #     st.write('******************')
-
-                tally_form_code = '''
-                <iframe data-tally-src="https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="157" frameborder="0" marginheight="0" marginwidth="0" title="Test form"></iframe><script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
-                '''
-
-                st.markdown(tally_form_code, unsafe_allow_html=True)
 
                 df = create_dataframe_from_response(response)
                 st.dataframe(df)
