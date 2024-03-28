@@ -233,7 +233,7 @@ def search_elastic_below_threshold(es_config, selected_index, question_vector, m
                              size=max_doc_num,
                              knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
                                   "query_vector": question_vector,
-                                  "k": max_doc_num,
+                                  "k": 30,
                                   "num_candidates": 10000,
                                   # "similarity": 20, # l2 norm, so not the [0,1]
                                   "filter": {
