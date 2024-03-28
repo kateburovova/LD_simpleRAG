@@ -173,7 +173,10 @@ if input_question:
                 else:
                     st.write("No category data available to display.")
 
-                if st.button('Please leave a review 👆'):
+                if st.button('Please leave a review 👆', key='review_button'):
+                    st.session_state['review_clicked'] = True
+
+                if 'review_clicked' in st.session_state and st.session_state['review_clicked']:
                     tally_form_url = 'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1'
                     components.iframe(tally_form_url, width=700, height=500, scrolling=True)
 
