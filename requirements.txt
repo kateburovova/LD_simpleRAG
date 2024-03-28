@@ -9,3 +9,4 @@ langchain
 langchain_openai
 langchainhub
 langchain-community
+plotly

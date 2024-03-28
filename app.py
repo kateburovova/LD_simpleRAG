@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+import plotly.express as px
 
 from langchain import hub
 from elasticsearch import Elasticsearch
@@ -154,6 +155,20 @@ if input_question:
                 #     st.write('******************')
                 df = create_dataframe_from_response(response)
                 st.dataframe(df)
+
+                if not df.empty and 'category' in df.columns:
+                    category_counts = df['category'].value_counts().reset_index()
+                    category_counts.columns = ['category', 'count']
+
+                    fig = px.pie(category_counts, names='category', values='count',
+                                 title='Category Distribution',
+                                 color_discrete_sequence=px.colors.sequential.RdBu,
+                                 hole=.3)
+
+                    fig.update_layout(margin=dict(t=0, b=0, l=0, r=0))
+                    st.plotly_chart(fig)
+                else:
+                    st.write("No category data available to display.")
 
             except BadRequestError as e:
                 st.error(f'Failed to execute search (embeddings might be missing for this index): {e.info}')
