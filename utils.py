@@ -154,7 +154,7 @@ def create_dataframe_from_response(response):
             selected_doc = {
                 'date': doc['_source'].get('date', ''),
                 'text': doc['_source'].get('text', ''),
-                'translated_text': doc['_source'].get('translated_text', ''),
+                # 'translated_text': doc['_source'].get('translated_text', ''),
                 'url': doc['_source'].get('url', ''),
                 'country': doc['_source'].get('country', ''),
                 'language': doc['_source'].get('language', ''),
