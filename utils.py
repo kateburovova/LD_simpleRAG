@@ -1,10 +1,9 @@
 import pandas as pd
 import streamlit as st
-
 import plotly.express as px
-from elasticsearch import Elasticsearch
 import logging
 
+from elasticsearch import Elasticsearch
 logging.basicConfig(level=logging.INFO)
 
 def get_unique_category_values(index_name, field, es_config):
@@ -34,6 +33,10 @@ def get_unique_category_values(index_name, field, es_config):
         return []
 
 def populate_default_values(index_name, es_config):
+    """
+    Retrieves unique values for specified fields from an Elasticsearch index
+    and appends an "Any" option to each list from the specified Elasticsearch index.
+    """
     category_values = get_unique_category_values(index_name, 'category.keyword', es_config)
     language_values = get_unique_category_values(index_name, 'language.keyword', es_config)
     country_values = get_unique_category_values(index_name, 'country.keyword', es_config)
@@ -76,6 +79,9 @@ def populate_terms(selected_items, field):
 
 
 def add_terms_condition(must_list, terms):
+    """
+    Adds individual term to Elasticsearch query.
+    """
     if terms:
         must_list.append({
             "bool": {
@@ -86,6 +92,13 @@ def add_terms_condition(must_list, terms):
 
 
 def create_must_term(category_terms, language_terms, country_terms, formatted_start_date, formatted_end_date):
+    """
+    Constructs a 'must' term for an Elasticsearch query that incorporates
+    filters for date range, category, language, and country.
+
+    Each filter term is added to the 'must' term only if it is not None.
+    """
+
     must_term = [
         {"range": {"date": {"gte": formatted_start_date, "lte": formatted_end_date}}}
     ]
@@ -95,9 +108,6 @@ def create_must_term(category_terms, language_terms, country_terms, formatted_st
     add_terms_condition(must_term, country_terms)
 
     return must_term
-
-
-import pandas as pd
 
 
 def create_dataframe_from_response(response):
@@ -141,7 +151,7 @@ def create_dataframe_from_response(response):
 def display_distribution_charts(df):
     """
     Displays donut charts for category, language, and country distributions in Streamlit.
-    The layout will be three columns with one donut chart in each column.
+    The layout is three columns with one donut chart in each column.
     """
 
     if df.empty:
