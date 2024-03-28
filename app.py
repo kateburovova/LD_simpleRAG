@@ -39,6 +39,7 @@ es_config = {
 }
 
 ########## APP start ###########
+st.set_page_config(layout="wide")
 
 # Get input index
 selected_index = None
@@ -146,23 +147,7 @@ if input_question:
                 st.markdown(resp.content)
                 st.write('******************')
 
-                tally_form_code = '''
-                <iframe data-tally-src="https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="157" frameborder="0" marginheight="0" marginwidth="0" title="Test form"></iframe><script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
-                '''
-                tally_form_url = 'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1'
-                # st.markdown(tally_form_code, unsafe_allow_html=True)
-                components.iframe(tally_form_url, width=700, height=500, scrolling=True)
-
                 st.markdown('### These are the texts retrieved by search:')
-
-                # Print source texts
-                # for doc in response['hits']['hits']:
-                #     st.write(doc['_source']['translated_text'])
-                #     st.write((doc['_source']['country'],doc['_source']['language'],doc['_source']['category']))
-                #     st.write()
-                #     st.write(doc['_score'])
-                #     st.write('******************')
-
                 df = create_dataframe_from_response(response)
                 st.dataframe(df)
 
@@ -172,9 +157,9 @@ if input_question:
 
                     fig = px.bar(category_counts, x='count', y='category',
                                  title='Category Distribution',
-                                 orientation='h',  # Horizontal bar chart
+                                 orientation='h',
                                  color='count',
-                                 color_continuous_scale=px.colors.sequential.Viridis)  # Use a nice color scale
+                                 color_continuous_scale=px.colors.sequential.Viridis)
 
                     fig.update_layout(
                         xaxis_title="Number of Posts",
@@ -187,6 +172,10 @@ if input_question:
                     st.plotly_chart(fig)
                 else:
                     st.write("No category data available to display.")
+
+                if st.button('Please leave a review 👆'):
+                    tally_form_url = 'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1'
+                    components.iframe(tally_form_url, width=700, height=500, scrolling=True)
 
             except BadRequestError as e:
                 st.error(f'Failed to execute search (embeddings might be missing for this index): {e.info}')
