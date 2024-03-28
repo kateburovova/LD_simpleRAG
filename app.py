@@ -126,7 +126,7 @@ if input_question:
         # Run search
         if st.button('RUN SEARCH'):
             start_time = time.time()
-            max_doc_num=50
+            max_doc_num=30
             try:
                 texts_list = []
                 st.write(f'Running search for {max_doc_num} relevant posts for question: {input_question}')
