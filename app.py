@@ -153,6 +153,13 @@ if input_question:
                 #     st.write()
                 #     st.write(doc['_score'])
                 #     st.write('******************')
+
+                tally_form_code = '''
+                <iframe data-tally-src="https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="157" frameborder="0" marginheight="0" marginwidth="0" title="Test form"></iframe><script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+                '''
+
+                st.markdown(tally_form_code, unsafe_allow_html=True)
+
                 df = create_dataframe_from_response(response)
                 st.dataframe(df)
 
@@ -160,12 +167,20 @@ if input_question:
                     category_counts = df['category'].value_counts().reset_index()
                     category_counts.columns = ['category', 'count']
 
-                    fig = px.pie(category_counts, names='category', values='count',
+                    fig = px.bar(category_counts, x='count', y='category',
                                  title='Category Distribution',
-                                 color_discrete_sequence=px.colors.sequential.RdBu,
-                                 hole=.3)
+                                 orientation='h',  # Horizontal bar chart
+                                 color='count',
+                                 color_continuous_scale=px.colors.sequential.Viridis)  # Use a nice color scale
 
-                    fig.update_layout(margin=dict(t=0, b=0, l=0, r=0))
+                    fig.update_layout(
+                        xaxis_title="Number of Posts",
+                        yaxis_title="Categories",
+                        coloraxis_showscale=False,
+                        margin=dict(t=40, b=0, l=0, r=0),
+                        yaxis={'categoryorder': 'total ascending'}
+                    )
+
                     st.plotly_chart(fig)
                 else:
                     st.write("No category data available to display.")
