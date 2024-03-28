@@ -10,7 +10,8 @@ from elasticsearch.exceptions import NotFoundError
 from angle_emb import AnglE, Prompts
 from langchain_openai import ChatOpenAI
 from authentificate import check_password
-from utils import display_distribution_charts,populate_default_values, index_options, populate_terms,create_must_term, create_dataframe_from_response
+from utils import (display_distribution_charts,populate_default_values, project_indexes,
+                   populate_terms,create_must_term, create_dataframe_from_response,flat_index_list)
 
 
 # Init Langchain and Langsmith services
@@ -27,11 +28,6 @@ OPENAI_API_KEY = st.secrets['ld_rag']['OPENAI_KEY_ORG']
 llm_chat = ChatOpenAI(temperature=0.0, openai_api_key=OPENAI_API_KEY,
              model_name='gpt-4-turbo-preview')
 
-# # Load Elastic creds
-# elastic_host = st.secrets['ld_rag']['ELASTIC_HOST']
-# elastic_port = st.secrets['ld_rag']['ELASTIC_PORT']
-# api_key = st.secrets['ld_rag']['ELASTIC_API']
-
 es_config = {
     'host': st.secrets['ld_rag']['ELASTIC_HOST'],
     'port': st.secrets['ld_rag']['ELASTIC_PORT'],
@@ -43,8 +39,21 @@ st.set_page_config(layout="wide")
 
 # Get input index
 selected_index = None
-selected_index = st.selectbox('Please choose index', index_options, index=None, placeholder="Select value")
-st.write(f"We'll search the answer in index: {selected_index}")
+search_option = st.radio("Choose your search option", ['Specific Indexes', 'All Project Indexes'])
+
+if search_option == 'Specific Indexes':
+    selected_indexes = st.multiselect('Please choose one or more indexes', flat_index_list, default=None, placeholder="Select one or more indexes")
+    if selected_indexes:
+        selected_index = ",".join(selected_indexes)
+        st.write(f"We'll search the answer in indexes: {', '.join(selected_indexes)}")
+    else:
+        selected_index = None
+else:
+    project_choice = st.selectbox('Please choose a project', list(project_indexes.keys()), index=None, placeholder="Select project")
+    if project_choice:
+        selected_indexes = project_indexes[project_choice]
+        selected_index = ",".join(selected_indexes)
+        st.write(f"We'll search the answer across all indexes for project: {project_choice}")
 
 if selected_index:
     category_values, language_values, country_values = populate_default_values(selected_index, es_config)
