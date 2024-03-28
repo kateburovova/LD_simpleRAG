@@ -172,8 +172,10 @@ if input_question:
                 st.dataframe(df)
                 display_distribution_charts(df)
 
-                st.markdown('### These are all texts above 60% relevance threshold:')
+                st.write(f'Running search for all relevant texts for statistics calculation, please wait...')
                 df_filtered = search_elastic_below_threshold(es_config, selected_index, question_vector, must_term)
+
+                st.markdown('### These are all texts above 60% relevance threshold:')
                 st.dataframe(df_filtered)
 
                 # Send rating to Tally
