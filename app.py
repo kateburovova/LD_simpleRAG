@@ -10,7 +10,7 @@ from elasticsearch.exceptions import NotFoundError
 from angle_emb import AnglE, Prompts
 from langchain_openai import ChatOpenAI
 from authentificate import check_password
-from utils import display_category_language_charts,populate_default_values, index_options, populate_terms,create_must_term, create_dataframe_from_response
+from utils import display_distribution_charts,populate_default_values, index_options, populate_terms,create_must_term, create_dataframe_from_response
 
 
 # Init Langchain and Langsmith services
@@ -151,30 +151,7 @@ if input_question:
                 df = create_dataframe_from_response(response)
                 st.dataframe(df)
 
-                display_category_language_charts(df)
-
-                # if not df.empty and 'category' in df.columns:
-                #     category_counts = df['category'].value_counts().reset_index()
-                #     category_counts.columns = ['category', 'count']
-                #
-                #     fig = px.bar(category_counts, x='count', y='category',
-                #                  title='Category Distribution',
-                #                  orientation='h',
-                #                  color='count',
-                #                  color_continuous_scale=px.colors.sequential.Viridis)
-                #
-                #     fig.update_layout(
-                #         xaxis_title="Number of Posts",
-                #         yaxis_title="Categories",
-                #         coloraxis_showscale=False,
-                #         margin=dict(t=40, b=0, l=0, r=0),
-                #         yaxis={'categoryorder': 'total ascending'}
-                #     )
-                #
-                #     st.plotly_chart(fig)
-                # else:
-                #     st.write("No category data available to display.")
-
+                display_distribution_charts(df)
 
                 tally_form_url = 'https://tally.so/embed/wzq1Aa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1'
                 components.iframe(tally_form_url, width=700, height=500, scrolling=True)

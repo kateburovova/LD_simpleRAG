@@ -137,34 +137,35 @@ def create_dataframe_from_response(response):
         print(f"An error occurred: {e}")
         return pd.DataFrame()
 
-def display_category_language_charts(df):
+
+def display_distribution_charts(df):
     """
-    Displays horizontal bar charts for category and language distributions side by side in Streamlit.
+    Displays horizontal bar charts for category, language, and country distributions side by side in Streamlit.
 
     Args:
         df (pd.DataFrame): The DataFrame containing the data.
     """
-    col1, col2 = st.columns(2)
+    uniform_layout = dict(
+        xaxis_title="Number of Posts",
+        coloraxis_showscale=False,
+        margin=dict(t=40, b=0, l=0, r=0),
+        yaxis={'categoryorder': 'total ascending'},
+        yaxis_fixedrange=True,
+        xaxis_fixedrange=True,
+    )
+
+    col1, col2, col3 = st.columns(3)
 
     # Column 1: Category Distribution Plot
     if not df.empty and 'category' in df.columns:
         category_counts = df['category'].value_counts().reset_index()
         category_counts.columns = ['category', 'count']
-
         fig_category = px.bar(category_counts, x='count', y='category',
                               title='Category Distribution',
                               orientation='h',
                               color='count',
                               color_continuous_scale=px.colors.sequential.Viridis)
-
-        fig_category.update_layout(
-            xaxis_title="Number of Posts",
-            yaxis_title="Categories",
-            coloraxis_showscale=False,
-            margin=dict(t=40, b=0, l=0, r=0),
-            yaxis={'categoryorder': 'total ascending'}
-        )
-
+        fig_category.update_layout(uniform_layout, yaxis_title="Categories")
         col1.plotly_chart(fig_category)
     else:
         col1.write("No category data available to display.")
@@ -173,25 +174,29 @@ def display_category_language_charts(df):
     if not df.empty and 'language' in df.columns:
         language_counts = df['language'].value_counts().reset_index()
         language_counts.columns = ['language', 'count']
-
         fig_language = px.bar(language_counts, x='count', y='language',
                               title='Language Distribution',
                               orientation='h',
                               color='count',
                               color_continuous_scale=px.colors.sequential.Plasma)
-
-        fig_language.update_layout(
-            xaxis_title="Number of Posts",
-            yaxis_title="Languages",
-            coloraxis_showscale=False,
-            margin=dict(t=40, b=0, l=0, r=0),
-            yaxis={'categoryorder': 'total ascending'}
-        )
-
+        fig_language.update_layout(uniform_layout, yaxis_title="Languages")
         col2.plotly_chart(fig_language)
     else:
         col2.write("No language data available to display.")
 
+    # Column 3: Country Distribution Plot
+    if not df.empty and 'country' in df.columns:
+        country_counts = df['country'].value_counts().reset_index()
+        country_counts.columns = ['country', 'count']
+        fig_country = px.bar(country_counts, x='count', y='country',
+                             title='Country Distribution',
+                             orientation='h',
+                             color='count',
+                             color_continuous_scale=px.colors.sequential.Agsunset)
+        fig_country.update_layout(uniform_layout, yaxis_title="Countries")
+        col3.plotly_chart(fig_country)
+    else:
+        col3.write("No country data available to display.")
 
 
 
