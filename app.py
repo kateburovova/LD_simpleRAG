@@ -126,7 +126,7 @@ if input_question:
         # Run search
         if st.button('RUN SEARCH'):
             start_time = time.time()
-            max_doc_num=30
+            max_doc_num=50
             try:
                 texts_list = []
                 st.write(f'Running search for {max_doc_num} relevant posts for question: {input_question}')
@@ -174,7 +174,7 @@ if input_question:
                 st.write('******************')
 
                 # Display tables
-                st.markdown('### These are top 30 texts used for alert generation:')
+                st.markdown(f'### These are top {max_doc_num} texts used for alert generation:')
                 df = create_dataframe_from_response(response)
                 st.dataframe(df)
                 display_distribution_charts(df)
