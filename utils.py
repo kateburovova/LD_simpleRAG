@@ -208,6 +208,45 @@ def display_distribution_charts(df):
                              title='Country Distribution', hole=0.4)
         col3.plotly_chart(fig_country, use_container_width=True)
 
+def create_dataframe_from_response_filtered(response, score_threshold=60):
+    records = []
+    for hit in response['hits']['hits']:
+        if hit['_score'] >= score_threshold:
+            source = hit['_source']
+            similarity_score = hit['_score']
+            source['similarity_score'] = similarity_score
+            records.append(source)
+
+    df = pd.DataFrame(records)
+
+    return df
+
+def search_elastic_below_threshold(es_config, selected_index, question_vector, must_term, max_doc_num=100000):
+    try:
+        es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"],
+                           request_timeout=600)
+
+        response = es.search(index=selected_index,
+                             size=max_doc_num,
+                             knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
+                                  "query_vector": question_vector,
+                                  "k": max_doc_num,
+                                  "num_candidates": 100000,
+                                  "similarity": 20, # l2 norm, so not the [0,1]
+                                  "filter": {
+                                      "bool": {
+                                          "must": must_term
+                                      }
+                                  }
+                                  }
+                             )
+        df = create_dataframe_from_response_filtered(response)
+        return df
+
+    except Exception as e:
+        st.error(f'Failed to connect to Elasticsearch: {str(e)}')
+
+        return None
 
 
 

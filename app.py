@@ -13,7 +13,8 @@ from angle_emb import AnglE, Prompts
 from langchain_openai import ChatOpenAI
 from authentificate import check_password
 from utils import (display_distribution_charts,populate_default_values, project_indexes,
-                   populate_terms,create_must_term, create_dataframe_from_response,flat_index_list)
+                   populate_terms,create_must_term, create_dataframe_from_response,flat_index_list,
+                   search_elastic_below_threshold)
 
 
 # Init Langchain and Langsmith services
@@ -131,7 +132,7 @@ if input_question:
                                      size=max_doc_num,
                                      knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
                                           "query_vector":  question_vector,
-                                          "k": 20,
+                                          "k": max_doc_num,
                                           "num_candidates": 10000,
                                           "filter": {
                                               "bool": {
@@ -165,12 +166,15 @@ if input_question:
                 st.markdown(resp.content)
                 st.write('******************')
 
-                st.markdown('### These are the texts retrieved by search:')
+                # Display tables
+                st.markdown('### These are top 30 texts used for alert generation:')
                 df = create_dataframe_from_response(response)
                 st.dataframe(df)
-
-                # Display table
                 display_distribution_charts(df)
+
+                st.markdown('### These are all texts above 60% relevance threshold:')
+                df_filtered = search_elastic_below_threshold(es_config, selected_index, question_vector, must_term)
+                st.dataframe(df_filtered)
 
                 # Send rating to Tally
                 execution_time = round(end_time - start_time, 2)
