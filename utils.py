@@ -90,6 +90,10 @@ project_indexes = {
         'recovery-win-twitter',
         'recovery-win-comments-telegram'
     ],
+    'ru-serbia': [
+        'ru-serbia-sample-telegram',
+        'ru-serbia-rs-telegram'
+    ],
     'detector-media': [
         'detector-media-tiktok'
     ]
