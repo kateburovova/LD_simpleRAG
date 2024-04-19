@@ -72,16 +72,17 @@ project_indexes = {
         'ua-by-web',
         'ua-by-youtube'
     ],
+    'dem-by': [
+        'dem-by-instagram',
+        'dem-by-telegram',
+        'dem-by-web',
+        'dem-by-youtube',
+        'dem-by-odnoklassniki',
+        'dem-by-vkontakte'
+    ],
     'dm-8-countries': [
         'dm-8-countries-twitter',
         'dm-8-countries-telegram'
-    ],
-    'ndi-lithuania': [
-        'ndi-lithuania-instagram',
-        'ndi-lithuania-web',
-        'ndi-lithuania-youtube',
-        'ndi-lithuania-telegram',
-        'ndi-lithuania-initial-kivu-twitter'
     ],
     'recovery-win': [
         'recovery-win-facebook',
@@ -91,8 +92,8 @@ project_indexes = {
         'recovery-win-comments-telegram'
     ],
     'ru-serbia': [
-        'ru-serbia-sample-telegram',
-        'ru-serbia-rs-telegram'
+        'ru-balkans-sample-telegram',
+        'ru-balkans-rs-telegram'
     ],
     'detector-media': [
         'detector-media-tiktok'
