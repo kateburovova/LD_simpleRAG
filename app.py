@@ -75,8 +75,9 @@ if selected_index:
         st.markdown("Hihi 👋")
         st.markdown("If Any remains selected or no values at all, filtering will not be applied to this field. Start typing to find the option faster.")
         categories_one_selected = st.multiselect('Select "Any" or choose one or more categories of the first (or only) level', category_values_one, default=['Any'])
-        categories_two_selected = st.multiselect('Select "Any" or choose one or more categories of the second level if those exist', category_values_two,
-                                             default=['Any'])
+        if "dem-arm" in selected_index:
+            categories_two_selected = st.multiselect('Select "Any" or choose one or more categories of the second level if those exist', category_values_two,
+                                                     default=['Any'])
         languages_selected = st.multiselect('Select "Any" or choose one or more languages', language_values, default=['Any'])
         countries_selected = st.multiselect('Select "Any" or choose one or more countries', country_values, default=['Any'])
 
