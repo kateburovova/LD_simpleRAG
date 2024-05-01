@@ -91,17 +91,25 @@ if selected_index:
     country_terms = populate_terms(country_values, 'country.keyword')
 
     issues_fields = get_prefixed_fields(selected_index, 'issues.', es_config)
-    if issues_fields:
-        thresholds_dict = {}
-        for field in issues_fields:
-            range_input = st.text_input(f"Threshold range for {field}", placeholder="e.g., 0.6:1")
-            if range_input:
-                thresholds_dict[field] = range_input
 
-        # Submit button to finalize the dictionary
-        # if st.button("Submit"):
-        #     st.write("Generated Thresholds Dictionary:")
-        #     st.json(thresholds_dict)
+    with st.popover("Tap to add issue filters"):
+        if issues_fields:
+            thresholds_dict = {}
+            for field in issues_fields:
+                min_value, max_value = st.slider(
+                    f"Threshold range for {field}",
+                    min_value=0.0,  # Set an appropriate minimum value
+                    max_value=1.0,  # Set an appropriate maximum value
+                    value=(0.6, 1.0),  # Default slider range
+                    step=0.05  # Slider step increment
+                )
+
+                thresholds_dict[field] = f"{min_value}:{max_value}"
+
+            #Submit button to finalize the dictionary
+            if st.button("Submit"):
+                st.write("Generated Thresholds Dictionary:")
+                st.json(thresholds_dict)
 
     # if issues_fields:
     #     st.markdown(f"These issues are present: {issues_fields}")
