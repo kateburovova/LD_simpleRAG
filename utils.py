@@ -72,13 +72,17 @@ project_indexes = {
         'ua-by-web',
         'ua-by-youtube'
     ],
-    'dem-by': [
-        'dem-by-instagram',
-        'dem-by-telegram',
-        'dem-by-web',
-        'dem-by-youtube',
-        'dem-by-odnoklassniki',
-        'dem-by-vkontakte'
+    'ua-by': [
+        'ua-by-facebook',
+        'ua-by-telegram',
+        'ua-by-web',
+        'ua-by-youtube'
+    ],
+    'dem-arm': [
+        'dem-arm-facebook',
+        'dem-arm-telegram',
+        'dem-arm-web',
+        'dem-arm-youtube'
     ],
     'dm-8-countries': [
         'dm-8-countries-twitter',
