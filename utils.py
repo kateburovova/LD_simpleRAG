@@ -100,11 +100,13 @@ project_indexes = {
         'ua-by-web',
         'ua-by-youtube'
     ],
-    'ua-by': [
-        'ua-by-facebook',
-        'ua-by-telegram',
-        'ua-by-web',
-        'ua-by-youtube'
+    'dem-by': [
+        'dem-by-instagram',
+        'dem-by-telegram',
+        'dem-by-web',
+        'dem-by-youtube',
+        'dem-by-vkontakte',
+        'dem-by-odnoklassniki'
     ],
     'dem-arm': [
         'dem-arm-facebook',
