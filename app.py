@@ -100,13 +100,12 @@ if selected_index:
                     f"Threshold range for {field}",
                     min_value=0.0,  # Set an appropriate minimum value
                     max_value=1.0,  # Set an appropriate maximum value
-                    value=(0.6, 1.0),  # Default slider range
+                    value=(0.0, 1.0),  # Default slider range
                     step=0.05  # Slider step increment
                 )
+                if (min_value, max_value) != (0.0, 1.0):
+                    thresholds_dict[field] = f"{min_value}:{max_value}"
 
-                thresholds_dict[field] = f"{min_value}:{max_value}"
-
-            #Submit button to finalize the dictionary
             if st.button("Submit"):
                 st.write("Generated Thresholds Dictionary:")
                 st.json(thresholds_dict)
