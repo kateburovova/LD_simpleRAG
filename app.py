@@ -214,7 +214,7 @@ if input_question:
                 st.markdown(f'### These are top {max_doc_num} texts used for alert generation:')
                 df = create_dataframe_from_response(response)
                 st.dataframe(df)
-                display_distribution_charts(df)
+                display_distribution_charts(df, selected_index)
 
                 # st.write(f'Running search for all relevant texts for statistics calculation. This can take a while, please wait...')
                 # df_filtered = search_elastic_below_threshold(es_config, selected_index, question_vector, must_term)
