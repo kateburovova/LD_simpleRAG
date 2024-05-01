@@ -243,8 +243,8 @@ def create_dataframe_from_response(response):
                 'country': doc['_source'].get('country', ''),
                 'language': doc['_source'].get('language', ''),
                 'category': doc['_source'].get('category', ''),
-                'category_one': doc['_source'].get('misc.category_one', ''),
-                'category_two': doc['_source'].get('misc.category_two', ''),
+                'misc.category_one': doc['_source'].get('misc.category_one', ''),
+                'misc.category_two': doc['_source'].get('misc.category_two', ''),
                 'id': doc.get('_id', '')
             }
             selected_documents.append(selected_doc)
