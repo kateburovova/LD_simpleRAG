@@ -261,7 +261,7 @@ def create_dataframe_from_response(response):
         return pd.DataFrame()
 
 
-def display_distribution_charts(df):
+def display_distribution_charts(df, selected_index):
     """
     Displays donut charts for category, language, and country distributions in Streamlit.
     The layout is three columns with one donut chart in each column.
@@ -271,42 +271,60 @@ def display_distribution_charts(df):
         st.write("No data available to display.")
         return
 
-    col1, col2, col3 = st.columns(3)
+    if 'dem_arm' in selected_index:
+        col1, col2, col3, col4 = st.columns(4)
 
-    if 'category' in df.columns:
-        category_counts = df['category'].value_counts().reset_index()
-        category_counts.columns = ['category', 'count']
-        fig_category = px.pie(category_counts, names='category', values='count',
-                              title='Category Distribution', hole=0.4)
-        col1.plotly_chart(fig_category, use_container_width=True)
+        if 'misc.category_one' in df.columns:
+            category_counts = df['misc.category_one'].value_counts().reset_index()
+            category_counts.columns = ['misc.category_one', 'count']
+            fig_category = px.pie(category_counts, names='misc.category_one', values='count',
+                                  title='Category One Distribution', hole=0.4)
+            col1.plotly_chart(fig_category, use_container_width=True)
 
-    if 'misc.category_one' in df.columns:
-        category_counts = df['misc.category_one'].value_counts().reset_index()
-        category_counts.columns = ['misc.category_one', 'count']
-        fig_category = px.pie(category_counts, names='misc.category_one', values='count',
-                              title='Category One Distribution', hole=0.4)
-        col1.plotly_chart(fig_category, use_container_width=True)
+        if 'misc.category_two' in df.columns:
+            category_counts = df['misc.category_two'].value_counts().reset_index()
+            category_counts.columns = ['misc.category_two', 'count']
+            fig_category = px.pie(category_counts, names='misc.category_two', values='count',
+                                  title='Category Two Distribution', hole=0.4)
+            col2.plotly_chart(fig_category, use_container_width=True)
 
-    if 'misc.category_two' in df.columns:
-        category_counts = df['misc.category_two'].value_counts().reset_index()
-        category_counts.columns = ['misc.category_two', 'count']
-        fig_category = px.pie(category_counts, names='misc.category_two', values='count',
-                              title='Category Two Distribution', hole=0.4)
-        col1.plotly_chart(fig_category, use_container_width=True)
+        if 'language' in df.columns:
+            language_counts = df['language'].value_counts().reset_index()
+            language_counts.columns = ['language', 'count']
+            fig_language = px.pie(language_counts, names='language', values='count',
+                                  title='Language Distribution', hole=0.4)
+            col3.plotly_chart(fig_language, use_container_width=True)
 
-    if 'language' in df.columns:
-        language_counts = df['language'].value_counts().reset_index()
-        language_counts.columns = ['language', 'count']
-        fig_language = px.pie(language_counts, names='language', values='count',
-                              title='Language Distribution', hole=0.4)
-        col2.plotly_chart(fig_language, use_container_width=True)
+        if 'country' in df.columns:
+            country_counts = df['country'].value_counts().reset_index()
+            country_counts.columns = ['country', 'count']
+            fig_country = px.pie(country_counts, names='country', values='count',
+                                 title='Country Distribution', hole=0.4)
+            col4.plotly_chart(fig_country, use_container_width=True)
 
-    if 'country' in df.columns:
-        country_counts = df['country'].value_counts().reset_index()
-        country_counts.columns = ['country', 'count']
-        fig_country = px.pie(country_counts, names='country', values='count',
-                             title='Country Distribution', hole=0.4)
-        col3.plotly_chart(fig_country, use_container_width=True)
+        else:
+            col1, col2, col3 = st.columns(3)
+
+            if 'category' in df.columns:
+                category_counts = df['category'].value_counts().reset_index()
+                category_counts.columns = ['category', 'count']
+                fig_category = px.pie(category_counts, names='category', values='count',
+                                      title='Category Distribution', hole=0.4)
+                col1.plotly_chart(fig_category, use_container_width=True)
+
+            if 'language' in df.columns:
+                language_counts = df['language'].value_counts().reset_index()
+                language_counts.columns = ['language', 'count']
+                fig_language = px.pie(language_counts, names='language', values='count',
+                                      title='Language Distribution', hole=0.4)
+                col3.plotly_chart(fig_language, use_container_width=True)
+
+            if 'country' in df.columns:
+                country_counts = df['country'].value_counts().reset_index()
+                country_counts.columns = ['country', 'count']
+                fig_country = px.pie(country_counts, names='country', values='count',
+                                     title='Country Distribution', hole=0.4)
+                col4.plotly_chart(fig_country, use_container_width=True)
 
 def create_dataframe_from_response_filtered(response, score_threshold=0.7):
     records = []
