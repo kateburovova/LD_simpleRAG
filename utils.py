@@ -243,6 +243,8 @@ def create_dataframe_from_response(response):
                 'country': doc['_source'].get('country', ''),
                 'language': doc['_source'].get('language', ''),
                 'category': doc['_source'].get('category', ''),
+                'category_one': doc['_source'].get('misc.category_one', ''),
+                'category_two': doc['_source'].get('misc.category_two', ''),
                 'id': doc.get('_id', '')
             }
             selected_documents.append(selected_doc)
@@ -276,6 +278,20 @@ def display_distribution_charts(df):
         category_counts.columns = ['category', 'count']
         fig_category = px.pie(category_counts, names='category', values='count',
                               title='Category Distribution', hole=0.4)
+        col1.plotly_chart(fig_category, use_container_width=True)
+
+    if 'misc.category_one' in df.columns:
+        category_counts = df['misc.category_one'].value_counts().reset_index()
+        category_counts.columns = ['misc.category_one', 'count']
+        fig_category = px.pie(category_counts, names='misc.category_one', values='count',
+                              title='Category One Distribution', hole=0.4)
+        col1.plotly_chart(fig_category, use_container_width=True)
+
+    if 'misc.category_two' in df.columns:
+        category_counts = df['misc.category_two'].value_counts().reset_index()
+        category_counts.columns = ['misc.category_two', 'count']
+        fig_category = px.pie(category_counts, names='misc.category_two', values='count',
+                              title='Category Two Distribution', hole=0.4)
         col1.plotly_chart(fig_category, use_container_width=True)
 
     if 'language' in df.columns:
