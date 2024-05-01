@@ -89,9 +89,9 @@ if selected_index:
     language_terms = populate_terms(language_values, 'language.keyword')
     country_terms = populate_terms(country_values, 'country.keyword')
 
-# Create issues filter
-issues_fields = get_prefixed_fields(selected_index, 'issues.', es_config)
-st.markdown(f"These issues are present: {issues_fields}")
+    # Create issues filter
+    issues_fields = get_prefixed_fields(selected_index, 'issues.', es_config)
+    st.markdown(f"These issues are present: {issues_fields}")
 
 # Create prompt vector
 input_question = None
