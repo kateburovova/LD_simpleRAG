@@ -69,18 +69,25 @@ else:
         st.write(f"We'll search in: {', '.join(selected_indexes)}")
 
 if selected_index:
-    category_values, language_values, country_values = populate_default_values(selected_index, es_config)
+    category_values_one, category_values_two, language_values, country_values = populate_default_values(selected_index, es_config)
 
     with st.popover("Tap to refine filters"):
         st.markdown("Hihi 👋")
         st.markdown("If Any remains selected or no values at all, filtering will not be applied to this field. Start typing to find the option faster.")
-        categories_selected = st.multiselect('Select "Any" or choose one or more categories', category_values, default=['Any'])
+        categories_one_selected = st.multiselect('Select "Any" or choose one or more categories of the first (or only) level', category_values_one, default=['Any'])
+        categories_two_selected = st.multiselect('Select "Any" or choose one or more categories of the second level if those exist', category_values_two,
+                                             default=['Any'])
         languages_selected = st.multiselect('Select "Any" or choose one or more languages', language_values, default=['Any'])
         countries_selected = st.multiselect('Select "Any" or choose one or more countries', country_values, default=['Any'])
 
-    category_terms = populate_terms(categories_selected, 'category.keyword')
-    language_terms = populate_terms(languages_selected, 'language.keyword')
-    country_terms = populate_terms(countries_selected, 'country.keyword')
+    if "dem-arm" in selected_index:
+        category_terms_one = populate_terms(category_values_one, 'misc.category_one.keyword')
+        category_terms_two = populate_terms(category_values_two, 'misc.category_two.keyword')
+    else:
+        category_terms_one = populate_terms(category_values_one, 'category.keyword')
+        category_terms_two = []
+    language_terms = populate_terms(language_values, 'language.keyword')
+    country_terms = populate_terms(country_values, 'country.keyword')
 
 # Create prompt vector
 input_question = None
@@ -110,7 +117,8 @@ if input_question:
     selected_end_date = st.date_input("Select end date:")
     formatted_end_date = selected_end_date.strftime("%Y-%m-%d")
     st.write("You selected end date:", selected_end_date)
-    must_term = create_must_term(category_terms,
+    must_term = create_must_term(category_terms_one,
+                                 category_terms_two,
                                  language_terms,
                                  country_terms,
                                  formatted_start_date=formatted_start_date,

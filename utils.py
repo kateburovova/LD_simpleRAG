@@ -32,19 +32,47 @@ def get_unique_category_values(index_name, field, es_config):
         logging.error(f"Error retrieving unique values from {field}: {e}")
         return []
 
+# def populate_default_values(index_name, es_config):
+#     """
+#     Retrieves unique values for specified fields from an Elasticsearch index
+#     and appends an "Any" option to each list from the specified Elasticsearch index.
+#     """
+#     if "dem-arm" in index_name:
+#         category_values = get_unique_category_values(index_name, 'category.keyword', es_config)
+#     else:
+#         category_values = get_unique_category_values(index_name, 'category.keyword', es_config)
+#     language_values = get_unique_category_values(index_name, 'language.keyword', es_config)
+#     country_values = get_unique_category_values(index_name, 'country.keyword', es_config)
+#
+#     category_values.append("Any")
+#     language_values.append("Any")
+#     country_values.append("Any")
+#
+#     return sorted(category_values), sorted(language_values), sorted(country_values)
+
 def populate_default_values(index_name, es_config):
     """
     Retrieves unique values for specified fields from an Elasticsearch index
     and appends an "Any" option to each list from the specified Elasticsearch index.
     """
-    category_values = get_unique_category_values(index_name, 'category.keyword', es_config)
+    if "dem-arm" in index_name:
+        category_level_one_values = get_unique_category_values(index_name, 'misc.category_one.keyword', es_config)
+        category_level_two_values = get_unique_category_values(index_name, 'misc.category_two.keyword', es_config)
+        category_level_one_values.append("Any")
+        category_level_two_values.append("Any")
+    else:
+        category_level_one_values = get_unique_category_values(index_name, 'category.keyword', es_config)
+        category_level_one_values.append("Any")
+        category_level_two_values = []
+
     language_values = get_unique_category_values(index_name, 'language.keyword', es_config)
     country_values = get_unique_category_values(index_name, 'country.keyword', es_config)
-    category_values.append("Any")
+
     language_values.append("Any")
     country_values.append("Any")
 
-    return sorted(category_values), sorted(language_values), sorted(country_values)
+    return sorted(category_level_one_values), sorted(category_level_two_values), sorted(language_values), sorted(
+        country_values)
 
 index_options = [
     'detector-media-tiktok',
@@ -130,7 +158,7 @@ def add_terms_condition(must_list, terms):
         })
 
 
-def create_must_term(category_terms, language_terms, country_terms, formatted_start_date, formatted_end_date):
+def create_must_term(category_one_terms, category_two_terms, language_terms, country_terms, formatted_start_date, formatted_end_date):
     """
     Constructs a 'must' term for an Elasticsearch query that incorporates
     filters for date range, category, language, and country.
@@ -142,7 +170,8 @@ def create_must_term(category_terms, language_terms, country_terms, formatted_st
         {"range": {"date": {"gte": formatted_start_date, "lte": formatted_end_date}}}
     ]
 
-    add_terms_condition(must_term, category_terms)
+    add_terms_condition(must_term, category_one_terms)
+    add_terms_condition(must_term, category_two_terms)
     add_terms_condition(must_term, language_terms)
     add_terms_condition(must_term, country_terms)
 
