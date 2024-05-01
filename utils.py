@@ -271,7 +271,7 @@ def display_distribution_charts(df, selected_index):
         st.write("No data available to display.")
         return
 
-    if 'dem_arm' in selected_index:
+    if 'dem-arm' in selected_index:
         col1, col2, col3, col4 = st.columns(4)
 
         if 'misc.category_one' in df.columns:
