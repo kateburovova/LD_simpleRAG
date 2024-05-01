@@ -14,7 +14,7 @@ from langchain_openai import ChatOpenAI
 from authentificate import check_password
 from utils import (display_distribution_charts,populate_default_values, project_indexes,
                    populate_terms,create_must_term, create_dataframe_from_response,flat_index_list,
-                   search_elastic_below_threshold)
+                   get_prefixed_fields)
 
 
 # Init Langchain and Langsmith services
@@ -88,6 +88,10 @@ if selected_index:
         category_terms_two = []
     language_terms = populate_terms(language_values, 'language.keyword')
     country_terms = populate_terms(country_values, 'country.keyword')
+
+# Create issues filter
+issues_fields = get_prefixed_fields(selected_index, 'issues.', es_config)
+st.markdown(f"These issues are present: {issues_fields}")
 
 # Create prompt vector
 input_question = None

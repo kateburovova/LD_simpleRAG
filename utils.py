@@ -135,6 +135,36 @@ project_indexes = {
 }
 flat_index_list = [index for indexes in project_indexes.values() for index in indexes]
 
+
+def get_prefixed_fields(index_, prefix, es_config):
+    es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"],
+                       request_timeout=600)
+    base_index = '-'.join(index_.split('-')[:2])
+    indices = es.cat.indices(index=f"{base_index}*", h="index").split()
+
+    all_fields = set()
+
+    for index in indices:
+        mapping = es.indices.get_mapping(index=index)
+        fields = extract_fields(mapping[index]['mappings'], 'issues.')
+        prefixed_fields = [field for field in fields if field.startswith(prefix)]
+        all_fields.update(prefixed_fields)
+
+    return list(all_fields)
+
+
+def extract_fields(mapping, target_prefix):
+    fields = []
+    if 'properties' in mapping:
+        for field, props in mapping['properties'].items():
+            if field == target_prefix.rstrip('.'):
+                sub_fields = extract_fields(props, field)
+                fields += [f"{field}.{sub}" for sub in sub_fields]
+            else:
+                fields.append(field)
+                fields += extract_fields(props, "")
+    return fields
+
 def populate_terms(selected_items, field):
     """
     Creates a list of 'term' queries for Elasticsearch based on selected items.
