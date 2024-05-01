@@ -125,7 +125,7 @@ project_indexes = {
         'recovery-win-twitter',
         'recovery-win-comments-telegram'
     ],
-    'ru-serbia': [
+    'ru-balkans': [
         'ru-balkans-sample-telegram',
         'ru-balkans-rs-telegram'
     ],
