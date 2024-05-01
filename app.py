@@ -99,9 +99,9 @@ if selected_index:
                 thresholds_dict[field] = range_input
 
         # Submit button to finalize the dictionary
-        if st.button("Submit"):
-            st.write("Generated Thresholds Dictionary:")
-            st.json(thresholds_dict)
+        # if st.button("Submit"):
+        #     st.write("Generated Thresholds Dictionary:")
+        #     st.json(thresholds_dict)
 
     # if issues_fields:
     #     st.markdown(f"These issues are present: {issues_fields}")
