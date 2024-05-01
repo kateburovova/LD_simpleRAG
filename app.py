@@ -92,7 +92,19 @@ if selected_index:
 
     issues_fields = get_prefixed_fields(selected_index, 'issues.', es_config)
     if issues_fields:
-        st.markdown(f"These issues are present: {issues_fields}")
+        thresholds_dict = {}
+        for field in issues_fields:
+            range_input = st.text_input(f"Threshold range for {field}", placeholder="e.g., 0.6:1")
+            if range_input:
+                thresholds_dict[field] = range_input
+
+        # Submit button to finalize the dictionary
+        if st.button("Submit"):
+            st.write("Generated Thresholds Dictionary:")
+            st.json(thresholds_dict)
+
+    # if issues_fields:
+    #     st.markdown(f"These issues are present: {issues_fields}")
 
 # Create prompt vector
 input_question = None
