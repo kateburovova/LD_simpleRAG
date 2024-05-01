@@ -93,6 +93,9 @@ if selected_index:
     issues_fields = get_prefixed_fields(selected_index, 'issues.', es_config)
 
     with st.popover("Tap to define additional filtering by issue"):
+        st.markdown("Edit at least one of the following thresholds to start filtering. "
+                    "Any number of thresholds can be set simultaneously. "
+                    "Editing several thresholds will result in filtering by at least one match to any of them (not all together).")
         if issues_fields:
             thresholds_dict = {}
             for field in issues_fields:
@@ -100,10 +103,10 @@ if selected_index:
                     f"Threshold range for {field}",
                     min_value=0.0,  # Set an appropriate minimum value
                     max_value=1.0,  # Set an appropriate maximum value
-                    value=(0.0, 1.0),  # Default slider range
+                    value=(0.0, 0.0),  # Default slider range
                     step=0.05  # Slider step increment
                 )
-                if (min_value, max_value) != (0.0, 1.0):
+                if (min_value, max_value) != (0.0, 0.0):
                     thresholds_dict[field] = f"{min_value}:{max_value}"
 
             # if st.button("Submit"):
