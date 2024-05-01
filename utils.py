@@ -276,14 +276,14 @@ def display_distribution_charts(df, selected_index):
     if 'dem-arm' in selected_index:
         col1, col2, col3, col4 = st.columns(4)
 
-        if 'misc.category_one' in df.columns:
+        if 'category_one' in df.columns:
             category_counts = df['category_one'].value_counts().reset_index()
             category_counts.columns = ['category_one', 'count']
             fig_category = px.pie(category_counts, names='category_one', values='count',
                                   title='Category One Distribution', hole=0.4)
             col1.plotly_chart(fig_category, use_container_width=True)
 
-        if 'misc.category_two' in df.columns:
+        if 'category_two' in df.columns:
             category_counts = df['category_two'].value_counts().reset_index()
             category_counts.columns = ['category_two', 'count']
             fig_category = px.pie(category_counts, names='category_two', values='count',
