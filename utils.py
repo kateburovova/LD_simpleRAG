@@ -32,24 +32,6 @@ def get_unique_category_values(index_name, field, es_config):
         logging.error(f"Error retrieving unique values from {field}: {e}")
         return []
 
-# def populate_default_values(index_name, es_config):
-#     """
-#     Retrieves unique values for specified fields from an Elasticsearch index
-#     and appends an "Any" option to each list from the specified Elasticsearch index.
-#     """
-#     if "dem-arm" in index_name:
-#         category_values = get_unique_category_values(index_name, 'category.keyword', es_config)
-#     else:
-#         category_values = get_unique_category_values(index_name, 'category.keyword', es_config)
-#     language_values = get_unique_category_values(index_name, 'language.keyword', es_config)
-#     country_values = get_unique_category_values(index_name, 'country.keyword', es_config)
-#
-#     category_values.append("Any")
-#     language_values.append("Any")
-#     country_values.append("Any")
-#
-#     return sorted(category_values), sorted(language_values), sorted(country_values)
-
 def populate_default_values(index_name, es_config):
     """
     Retrieves unique values for specified fields from an Elasticsearch index
@@ -152,6 +134,32 @@ def get_prefixed_fields(index_, prefix, es_config):
 
     return list(all_fields)
 
+def add_issues_conditions(must_list, thresholds_dict):
+    """
+    Adds "issues" field conditions to the Elasticsearch query based on a given dictionary of thresholds.
+    thresholds_dict: A dictionary with keys as "issues" fields and values as threshold ranges in the format "min:max".
+    """
+    issues_conditions = []
+
+    for issue_field, threshold in thresholds_dict.items():
+        min_value, max_value = map(float, threshold.split(":"))
+
+        issues_conditions.append({
+            "range": {
+                issue_field: {
+                    "gte": min_value,
+                    "lte": max_value
+                }
+            }
+        })
+
+    must_list.append({
+        "bool": {
+            "should": issues_conditions,
+            "minimum_should_match": 1
+        }
+    })
+
 
 def extract_fields(mapping, target_prefix):
     fields = []
@@ -190,7 +198,7 @@ def add_terms_condition(must_list, terms):
         })
 
 
-def create_must_term(category_one_terms, category_two_terms, language_terms, country_terms, formatted_start_date, formatted_end_date):
+def create_must_term(category_one_terms, category_two_terms, language_terms, country_terms, formatted_start_date, formatted_end_date,thresholds_dict=None):
     """
     Constructs a 'must' term for an Elasticsearch query that incorporates
     filters for date range, category, language, and country.
@@ -206,6 +214,9 @@ def create_must_term(category_one_terms, category_two_terms, language_terms, cou
     add_terms_condition(must_term, category_two_terms)
     add_terms_condition(must_term, language_terms)
     add_terms_condition(must_term, country_terms)
+
+    if thresholds_dict:
+        add_issues_conditions(must_term, thresholds_dict)
 
     return must_term
 

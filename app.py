@@ -92,7 +92,7 @@ if selected_index:
 
     issues_fields = get_prefixed_fields(selected_index, 'issues.', es_config)
 
-    with st.popover("Tap to add issue filters"):
+    with st.popover("Tap to define additional filtering by issue"):
         if issues_fields:
             thresholds_dict = {}
             for field in issues_fields:
@@ -106,9 +106,9 @@ if selected_index:
                 if (min_value, max_value) != (0.0, 1.0):
                     thresholds_dict[field] = f"{min_value}:{max_value}"
 
-            if st.button("Submit"):
-                st.write("Generated Thresholds Dictionary:")
-                st.json(thresholds_dict)
+            # if st.button("Submit"):
+            #     st.write("Generated Thresholds Dictionary:")
+            #     st.json(thresholds_dict)
 
     # if issues_fields:
     #     st.markdown(f"These issues are present: {issues_fields}")
@@ -146,7 +146,8 @@ if input_question:
                                  language_terms,
                                  country_terms,
                                  formatted_start_date=formatted_start_date,
-                                 formatted_end_date=formatted_end_date)
+                                 formatted_end_date=formatted_end_date,
+                                 thresholds_dict = thresholds_dict)
 
 
     if formatted_start_date and formatted_end_date:
