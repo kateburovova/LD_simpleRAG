@@ -179,7 +179,8 @@ if input_question:
                                           "num_candidates": 10000,
                                           "filter": {
                                               "bool": {
-                                                  "must": must_term
+                                                  "must": must_term,
+                                                  "must_not": [{"term": {"type": "comment"}}]
                                               }
                                           }
                                           }
