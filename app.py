@@ -35,6 +35,7 @@ es_config = {
     'port': st.secrets['ld_rag']['ELASTIC_PORT'],
     'api_key': st.secrets['ld_rag']['ELASTIC_API']
 }
+category_terms_one = None
 
 ########## APP start ###########
 st.set_page_config(layout="wide")
@@ -82,10 +83,10 @@ if selected_index:
         countries_selected = st.multiselect('Select "Any" or choose one or more countries', country_values, default=['Any'])
 
     if "dem-arm" in selected_index:
-        category_terms_one = populate_terms(category_values_one, 'misc.category_one.keyword')
-        category_terms_two = populate_terms(category_values_two, 'misc.category_two.keyword')
+        category_terms_one = populate_terms(categories_one_selected, 'misc.category_one.keyword')
+        category_terms_two = populate_terms(categories_two_selected, 'misc.category_two.keyword')
     else:
-        category_terms_one = populate_terms(category_values_one, 'category.keyword')
+        category_terms_one = populate_terms(categories_one_selected, 'category.keyword')
         category_terms_two = []
     language_terms = populate_terms(language_values, 'language.keyword')
     country_terms = populate_terms(country_values, 'country.keyword')
