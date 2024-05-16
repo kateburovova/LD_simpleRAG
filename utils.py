@@ -108,8 +108,6 @@ project_indexes = {
         'recovery-win-comments-telegram'
     ],
     'ru-balkans': [
-        'ru-balkans-sample-telegram',
-        'ru-balkans-rs-telegram',
         'ru-balkans-facebook',
         'ru-balkans-telegram',
         'ru-balkans-youtube'
