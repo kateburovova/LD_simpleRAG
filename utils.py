@@ -110,7 +110,10 @@ project_indexes = {
     'ru-balkans': [
         'ru-balkans-facebook',
         'ru-balkans-telegram',
-        'ru-balkans-youtube'
+        'ru-balkans-youtube',
+        'ru-balkans-sample-facebook',
+        'ru-balkans-sample-telegram',
+        'ru-balkans-sample-youtube'
     ],
     'detector-media': [
         'detector-media-tiktok'
