@@ -130,12 +130,12 @@ if input_question:
     def load_model():
         angle_model = AnglE.from_pretrained('WhereIsAI/UAE-Large-V1',
                                             pooling_strategy='cls')
-        angle_model.set_prompt(Prompts.C)
+        # angle_model.set_prompt(Prompts.C)
         return angle_model
 
     # Create question embedding
     angle = load_model()
-    vec = angle.encode({'text': input_question}, to_numpy=True)
+    vec = angle.encode({'text': input_question}, to_numpy=True, prompt=Prompts.C)
     question_vector = vec.tolist()[0]
 
     # Get input dates

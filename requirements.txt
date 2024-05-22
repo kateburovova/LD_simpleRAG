@@ -2,7 +2,7 @@ streamlit
 altair
 pandas
 numpy
-angle-emb
+angle-emb>=0.4
 elasticsearch
 python-dotenv
 langchain
