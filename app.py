@@ -1,20 +1,21 @@
+# Base
 import os
-import streamlit as st
 import time
-import plotly.express as px
-import streamlit.components.v1 as components
 
-from langchain import hub
-from langchain import callbacks
-from elasticsearch import Elasticsearch
-from elasticsearch import BadRequestError
+# Internal
+from authentificate import check_password
+from utils import (display_distribution_charts, populate_default_values, project_indexes,
+                   populate_terms, create_must_term, create_dataframe_from_response, flat_index_list,
+                   get_prefixed_fields)
+
+# External
+import streamlit as st
+import streamlit.components.v1 as components
+from langchain import hub, callbacks
+from langchain_openai import ChatOpenAI
+from elasticsearch import Elasticsearch, BadRequestError
 from elasticsearch.exceptions import NotFoundError
 from angle_emb import AnglE, Prompts
-from langchain_openai import ChatOpenAI
-from authentificate import check_password
-from utils import (display_distribution_charts,populate_default_values, project_indexes,
-                   populate_terms,create_must_term, create_dataframe_from_response,flat_index_list,
-                   get_prefixed_fields)
 
 
 # Init Langchain and Langsmith services
@@ -24,11 +25,10 @@ os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGCHAIN_API_KEY"] = st.secrets['ld_rag']['LANGCHAIN_API_KEY']
 os.environ["LANGSMITH_ACC"] = st.secrets['ld_rag']['LANGSMITH_ACC']
 
-
 # Init openai model
 OPENAI_API_KEY = st.secrets['ld_rag']['OPENAI_KEY_ORG']
 llm_chat = ChatOpenAI(temperature=0.0, openai_api_key=OPENAI_API_KEY,
-             model_name='gpt-4-1106-preview')
+                      model_name='gpt-4-1106-preview')
 
 es_config = {
     'host': st.secrets['ld_rag']['ELASTIC_HOST'],
@@ -52,35 +52,45 @@ else:
 prompt_template = hub.pull(url)
 
 selected_index = None
-search_option = st.radio("Choose Specific Indexes if you want to search one or more different indexes, choose All Project Indexes to select all indexes within a project.",
-                         ['Specific Indexes', 'All Project Indexes'])
+search_option = st.radio(
+    "Choose Specific Indexes if you want to search one or more different indexes, choose All Project Indexes to select all indexes within a project.",
+    ['Specific Indexes', 'All Project Indexes'])
 
 if search_option == 'Specific Indexes':
-    selected_indexes = st.multiselect('Please choose one or more indexes', flat_index_list, default=None, placeholder="Select one or more indexes")
+    selected_indexes = st.multiselect('Please choose one or more indexes', flat_index_list, default=None,
+                                      placeholder="Select one or more indexes")
     if selected_indexes:
         selected_index = ",".join(selected_indexes)
         st.write(f"We'll search in: {', '.join(selected_indexes)}")
     else:
         selected_index = None
 else:
-    project_choice = st.selectbox('Please choose a project', list(project_indexes.keys()), index=None, placeholder="Select project")
+    project_choice = st.selectbox('Please choose a project', list(project_indexes.keys()), index=None,
+                                  placeholder="Select project")
     if project_choice:
         selected_indexes = project_indexes[project_choice]
         selected_index = ",".join(selected_indexes)
         st.write(f"We'll search in: {', '.join(selected_indexes)}")
 
 if selected_index:
-    category_values_one, category_values_two, language_values, country_values = populate_default_values(selected_index, es_config)
+    category_values_one, category_values_two, language_values, country_values = populate_default_values(selected_index,
+                                                                                                        es_config)
 
     with st.popover("Tap to refine filters"):
         st.markdown("Hihi 👋")
-        st.markdown("If Any remains selected or no values at all, filtering will not be applied to this field. Start typing to find the option faster.")
-        categories_one_selected = st.multiselect('Select "Any" or choose one or more categories of the first (or only) level', category_values_one, default=['Any'])
+        st.markdown(
+            "If Any remains selected or no values at all, filtering will not be applied to this field. Start typing to find the option faster.")
+        categories_one_selected = st.multiselect(
+            'Select "Any" or choose one or more categories of the first (or only) level', category_values_one,
+            default=['Any'])
         if "dem-arm" in selected_index:
-            categories_two_selected = st.multiselect('Select "Any" or choose one or more categories of the second level if those exist', category_values_two,
-                                                     default=['Any'])
-        languages_selected = st.multiselect('Select "Any" or choose one or more languages', language_values, default=['Any'])
-        countries_selected = st.multiselect('Select "Any" or choose one or more countries', country_values, default=['Any'])
+            categories_two_selected = st.multiselect(
+                'Select "Any" or choose one or more categories of the second level if those exist', category_values_two,
+                default=['Any'])
+        languages_selected = st.multiselect('Select "Any" or choose one or more languages', language_values,
+                                            default=['Any'])
+        countries_selected = st.multiselect('Select "Any" or choose one or more countries', country_values,
+                                            default=['Any'])
 
     if "dem-arm" in selected_index:
         category_terms_one = populate_terms(categories_one_selected, 'misc.category_one.keyword')
@@ -110,28 +120,22 @@ if selected_index:
                 if (min_value, max_value) != (0.0, 0.0):
                     thresholds_dict[field] = f"{min_value}:{max_value}"
 
-            # if st.button("Submit"):
-            #     st.write("Generated Thresholds Dictionary:")
-            #     st.json(thresholds_dict)
-
-    # if issues_fields:
-    #     st.markdown(f"These issues are present: {issues_fields}")
-
 # Create prompt vector
 input_question = None
 st.markdown('### Please enter your question')
 input_question = st.text_input("Enter your question here (phrased as if you ask a human)")
 
-
 if input_question:
 
     formatted_start_date, formatted_end_date = None, None
+
+
     @st.cache_resource(hash_funcs={"_thread.RLock": lambda _: None, "builtins.weakref": lambda _: None})
     def load_model():
         angle_model = AnglE.from_pretrained('WhereIsAI/UAE-Large-V1',
                                             pooling_strategy='cls')
-        # angle_model.set_prompt(Prompts.C)
         return angle_model
+
 
     # Create question embedding
     angle = load_model()
@@ -151,8 +155,7 @@ if input_question:
                                  country_terms,
                                  formatted_start_date=formatted_start_date,
                                  formatted_end_date=formatted_end_date,
-                                 thresholds_dict = thresholds_dict)
-
+                                 thresholds_dict=thresholds_dict)
 
     if formatted_start_date and formatted_end_date:
 
@@ -163,19 +166,20 @@ if input_question:
         # Run search
         if st.button('RUN SEARCH'):
             start_time = time.time()
-            max_doc_num=30
+            max_doc_num = 30
             try:
                 texts_list = []
                 st.write(f'Running search for {max_doc_num} relevant posts for question: {input_question}')
                 try:
-                    es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"], request_timeout=600)
+                    es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"],
+                                       request_timeout=600)
                 except Exception as e:
                     st.error(f'Failed to connect to Elasticsearch: {str(e)}')
 
                 response = es.search(index=selected_index,
                                      size=max_doc_num,
                                      knn={"field": "embeddings.WhereIsAI/UAE-Large-V1",
-                                          "query_vector":  question_vector,
+                                          "query_vector": question_vector,
                                           "k": max_doc_num,
                                           "num_candidates": 10000,
                                           "filter": {
@@ -217,12 +221,6 @@ if input_question:
                 df = create_dataframe_from_response(response)
                 st.dataframe(df)
                 display_distribution_charts(df, selected_index)
-
-                # st.write(f'Running search for all relevant texts for statistics calculation. This can take a while, please wait...')
-                # df_filtered = search_elastic_below_threshold(es_config, selected_index, question_vector, must_term)
-                #
-                # st.markdown('### These are all texts above 60% relevance threshold:')
-                # st.dataframe(df_filtered)
 
                 # Send rating to Tally
                 execution_time = round(end_time - start_time, 2)

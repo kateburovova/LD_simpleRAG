@@ -4,7 +4,9 @@ import plotly.express as px
 import logging
 
 from elasticsearch import Elasticsearch
+
 logging.basicConfig(level=logging.INFO)
+
 
 def get_unique_category_values(index_name, field, es_config):
     """
@@ -13,7 +15,8 @@ def get_unique_category_values(index_name, field, es_config):
     list: A list of unique values from the 'category.keyword' field.
     """
     try:
-        es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"], request_timeout=300)
+        es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"],
+                           request_timeout=300)
 
         agg_query = {
             "size": 0,
@@ -31,6 +34,7 @@ def get_unique_category_values(index_name, field, es_config):
     except Exception as e:
         logging.error(f"Error retrieving unique values from {field}: {e}")
         return []
+
 
 def populate_default_values(index_name, es_config):
     """
@@ -55,6 +59,7 @@ def populate_default_values(index_name, es_config):
 
     return sorted(category_level_one_values), sorted(category_level_two_values), sorted(language_values), sorted(
         country_values)
+
 
 index_options = [
     'detector-media-tiktok',
@@ -138,6 +143,7 @@ def get_prefixed_fields(index_, prefix, es_config):
 
     return list(all_fields)
 
+
 def add_issues_conditions(must_list, thresholds_dict):
     """
     Adds "issues" field conditions to the Elasticsearch query based on a given dictionary of thresholds.
@@ -177,6 +183,7 @@ def extract_fields(mapping, target_prefix):
                 fields += extract_fields(props, "")
     return fields
 
+
 def populate_terms(selected_items, field):
     """
     Creates a list of 'term' queries for Elasticsearch based on selected items.
@@ -202,7 +209,8 @@ def add_terms_condition(must_list, terms):
         })
 
 
-def create_must_term(category_one_terms, category_two_terms, language_terms, country_terms, formatted_start_date, formatted_end_date,thresholds_dict=None):
+def create_must_term(category_one_terms, category_two_terms, language_terms, country_terms, formatted_start_date,
+                     formatted_end_date, thresholds_dict=None):
     """
     Constructs a 'must' term for an Elasticsearch query that incorporates
     filters for date range, category, language, and country.
@@ -249,6 +257,8 @@ def create_dataframe_from_response(response):
                 'country': doc['_source'].get('country', ''),
                 'language': doc['_source'].get('language', ''),
                 'category': doc['_source'].get('category', ''),
+                'source': doc['_source'].get('source', ''),
+                '_domain': doc['_source'].get('_domain', ''),
                 'category_one': misc_dict.get('category_one', ''),
                 'category_two': misc_dict.get('category_two', ''),
                 'id': doc.get('_id', '')
@@ -332,6 +342,7 @@ def display_distribution_charts(df, selected_index):
                                  title='Country Distribution', hole=0.4)
             col3.plotly_chart(fig_country, use_container_width=True)
 
+
 def create_dataframe_from_response_filtered(response, score_threshold=0.7):
     records = []
     for hit in response['hits']['hits']:
@@ -344,6 +355,7 @@ def create_dataframe_from_response_filtered(response, score_threshold=0.7):
     df = pd.DataFrame(records)
 
     return df
+
 
 def search_elastic_below_threshold(es_config, selected_index, question_vector, must_term, max_doc_num=10000):
     try:
@@ -371,6 +383,3 @@ def search_elastic_below_threshold(es_config, selected_index, question_vector, m
         st.error(f'Failed to connect to Elasticsearch: {str(e)}')
 
         return None
-
-
-
