@@ -79,11 +79,12 @@ if selected_index:
     with st.popover("Tap to refine filters"):
         st.markdown("Hihi 👋")
         st.markdown(
-            "If Any remains selected or no values at all, filtering will not be applied to this field. Start typing to find the option faster.")
+            "If Any remains selected or no values at all, filtering will not be applied to this field. Start typing "
+            "to find the option faster.")
         categories_one_selected = st.multiselect(
             'Select "Any" or choose one or more categories of the first (or only) level', category_values_one,
             default=['Any'])
-        if "dem-arm" in selected_index or "ru-balkans" in selected_index:
+        if "dem-arm" in selected_index:
             categories_two_selected = st.multiselect(
                 'Select "Any" or choose one or more categories of the second level if those exist', category_values_two,
                 default=['Any'])
