@@ -96,6 +96,9 @@ if selected_index:
     if "dem-arm" in selected_index:
         category_terms_one = populate_terms(categories_one_selected, 'misc.category_one.keyword')
         category_terms_two = populate_terms(categories_two_selected, 'misc.category_two.keyword')
+    if "ru-balkans" in selected_index:
+        category_terms_one = populate_terms(categories_one_selected, 'misc.category_one.keyword')
+        category_terms_two = []
     else:
         category_terms_one = populate_terms(categories_one_selected, 'category.keyword')
         category_terms_two = []
