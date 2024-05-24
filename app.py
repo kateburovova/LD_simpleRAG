@@ -83,7 +83,7 @@ if selected_index:
         categories_one_selected = st.multiselect(
             'Select "Any" or choose one or more categories of the first (or only) level', category_values_one,
             default=['Any'])
-        if "dem-arm" in selected_index:
+        if "dem-arm" in selected_index or "ru-balkans" in selected_index:
             categories_two_selected = st.multiselect(
                 'Select "Any" or choose one or more categories of the second level if those exist', category_values_two,
                 default=['Any'])
