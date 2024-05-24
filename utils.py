@@ -49,6 +49,7 @@ def populate_default_values(index_name, es_config):
     elif "ru-balkans" in index_name:
         category_level_one_values = get_unique_category_values(index_name, 'misc.category_one.keyword', es_config)
         category_level_one_values.append("Any")
+        category_level_two_values = []
     else:
         category_level_one_values = get_unique_category_values(index_name, 'category.keyword', es_config)
         category_level_one_values.append("Any")
