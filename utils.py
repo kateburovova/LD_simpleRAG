@@ -97,7 +97,8 @@ project_indexes = {
         'dem-by-web',
         'dem-by-youtube',
         'dem-by-vkontakte',
-        'dem-by-odnoklassniki'
+        'dem-by-odnoklassniki',
+        'dem-by-whisper-tiktok'
     ],
     'dem-arm': [
         'dem-arm-facebook',
