@@ -124,8 +124,11 @@ project_indexes = {
         'ru-balkans-sample-telegram',
         'ru-balkans-sample-youtube'
     ],
+    'arabic_test': [
+        'arabic-translation-test-web'
+    ],
     'detector-media': [
-        'detector-media-tiktok'
+        'detector-media-tiktok',
     ]
 }
 flat_index_list = [index for indexes in project_indexes.values() for index in indexes]
