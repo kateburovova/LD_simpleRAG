@@ -36,6 +36,7 @@ es_config = {
     'api_key': st.secrets['ld_rag']['ELASTIC_API']
 }
 category_terms_one = None
+thresholds_dict = None
 
 ########## APP start ###########
 st.set_page_config(layout="wide")
