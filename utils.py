@@ -126,7 +126,8 @@ project_indexes = {
         'ru-balkans-sample-youtube'
     ],
     'arabic_test': [
-        'arabic-translation-test-web'
+        'arabic-translation-test-web',
+        'cs-disininfo-iq-telegram'
     ],
     'detector-media': [
         'detector-media-tiktok',
