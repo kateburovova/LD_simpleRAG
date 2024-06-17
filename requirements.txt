@@ -10,3 +10,4 @@ langchain_openai
 langchainhub
 langchain-community
 plotly
+tenacity==8.3.0
