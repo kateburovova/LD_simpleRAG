@@ -91,6 +91,9 @@ project_indexes = {
         'ua-by-web',
         'ua-by-youtube'
     ],
+    'RTB': [
+        'oip_web_rt'
+    ],
     'dem-by': [
         'dem-by-instagram',
         'dem-by-telegram',
