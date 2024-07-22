@@ -11,3 +11,4 @@ langchainhub
 langchain-community
 plotly
 tenacity==8.3.0
+urllib3>=2.2.2
