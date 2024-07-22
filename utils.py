@@ -16,7 +16,7 @@ def get_unique_category_values(index_name, field, es_config):
     """
     try:
         es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"],
-                           request_timeout=300)
+                           request_timeout=300, verify_certs=False)
 
         agg_query = {
             "size": 0,
@@ -148,7 +148,7 @@ flat_index_list = [index for indexes in project_indexes.values() for index in in
 
 def get_prefixed_fields(index_, prefix, es_config):
     es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"],
-                       request_timeout=600)
+                       request_timeout=600,verify_certs=False)
     base_index = '-'.join(index_.split('-')[:2])
     indices = es.cat.indices(index=f"{base_index}*", h="index").split()
 
@@ -379,7 +379,7 @@ def create_dataframe_from_response_filtered(response, score_threshold=0.7):
 def search_elastic_below_threshold(es_config, selected_index, question_vector, must_term, max_doc_num=10000):
     try:
         es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"],
-                           request_timeout=600)
+                           request_timeout=600, verify_certs=False)
 
         response = es.search(index=selected_index,
                              size=max_doc_num,
