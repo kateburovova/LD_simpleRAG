@@ -137,6 +137,7 @@ project_indexes = {
     ],
     'eu4ge': [
         'eu4ge-facebook',
+        'eu4ge-web',
         'eu4ge-instagram',
         'eu4ge-telegram',
         'eu4ge-tiktok'

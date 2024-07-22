@@ -39,6 +39,7 @@ category_terms_one = None
 language_terms = None
 category_terms_two = None
 thresholds_dict = None
+country_terms = None
 
 ########## APP start ###########
 st.set_page_config(layout="wide")
