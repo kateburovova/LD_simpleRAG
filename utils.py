@@ -134,6 +134,12 @@ project_indexes = {
     ],
     'detector-media': [
         'detector-media-tiktok',
+    ],
+    'eu4ge': [
+        'eu4ge-facebook',
+        'eu4ge-instagram',
+        'eu4ge-telegram',
+        'eu4ge-tiktok'
     ]
 }
 flat_index_list = [index for indexes in project_indexes.values() for index in indexes]
