@@ -53,6 +53,7 @@ if format_choice == 'Alert':
     url = f'{os.environ["LANGSMITH_ACC"]}/simple-rag'
 else:
     url = f'{os.environ["LANGSMITH_ACC"]}/simple-rag:9388b291'
+    format_choice = 'Summary'
 prompt_template = hub.pull(url)
 
 selected_index = None
