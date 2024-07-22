@@ -181,7 +181,7 @@ if input_question:
                 st.write(f'Running search for {max_doc_num} relevant posts for question: {input_question}')
                 try:
                     es = Elasticsearch(f'https://{es_config["host"]}:{es_config["port"]}', api_key=es_config["api_key"],
-                                       request_timeout=600, verify_certs=False)
+                                       request_timeout=600)
                 except Exception as e:
                     st.error(f'Failed to connect to Elasticsearch: {str(e)}')
 
